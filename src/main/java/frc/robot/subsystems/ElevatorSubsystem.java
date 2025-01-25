@@ -43,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if ((elevatorLimitSwitch.get() && Speed > 0)
      || (elevatorLeader.getEncoder().getPosition() < ElevatorConstants.ELEVATOR_TOP_LIMIT)
      || (elevatorLeader.getEncoder().getPosition() > ElevatorConstants.ELEVATOR_BOTTOM_LIMIT)){
-      Speed = 0; //stops elevator movement to stop it from breaking the robot
+      Speed = 0; //stops robot from killing itself
     }
     if (elevatorLimitSwitch.get()){
       zeroElevator(); //resets elevator encoder pos to 0

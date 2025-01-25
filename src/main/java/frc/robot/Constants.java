@@ -155,6 +155,7 @@ public final class Constants {
     public static final int ELEVATOR_LIMIT_SWITCH = 11;
     public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
+    public static final double ELEVATOR_SPEED_LIMIT = 0.25;
   }
   public static class CommonConstants {
     public static final boolean LOG_INTO_FILE_ENABLED = true;
