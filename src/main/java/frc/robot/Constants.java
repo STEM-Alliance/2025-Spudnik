@@ -149,7 +149,13 @@ public final class Constants {
     public static final double XY_SPEED_LIMIT = 1.0;
     public static final double Z_SPEED_LIMIT = 1.0;
   }
-
+  public static final class ElevatorConstants {
+    public static final int ELEVATOR_LEADER_PORT = 9;
+    public static final int ELEVATOR_FOLLOWER_PORT = 10;
+    public static final int ELEVATOR_LIMIT_SWITCH = 11;
+    public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
+    public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
+  }
   public static class CommonConstants {
     public static final boolean LOG_INTO_FILE_ENABLED = true;
   }
