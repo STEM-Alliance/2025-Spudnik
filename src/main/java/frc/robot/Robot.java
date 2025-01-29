@@ -42,12 +42,12 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     // Shuffleboard.getTab("SmartDashboard").add(autoChooser);
-    SmartDashboard.putData(autoChooser);
 
             DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
 
     m_robotContainer = new RobotContainer();
+    m_robotContainer.getSwerveSubsystem().stopDrive();
   }
 
   /**
@@ -109,6 +109,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     m_robotContainer.getSwerveSubsystem().setRotationStyle(RotationStyle.Driver);
+    m_robotContainer.getSwerveSubsystem().zeroHeading();
     // m_robotContainer.resetShootake();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

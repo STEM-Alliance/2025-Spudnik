@@ -10,6 +10,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -72,15 +73,15 @@ public final class Constants {
     public static final double STEER_RADIANS_PER_MINUTE = STEER_ROTATION_TO_RADIANS / 60d;
 
     // TODO: ############## REPLACE PLACEHOLDERS ##############
-    public static final double WHEEL_FRICTION_COEFFICIENT = 1;
+    public static final double WHEEL_FRICTION_COEFFICIENT = 1.2;
 
     // Actual drive gains
     // public static final double MODULE_KP = 0.5;
     // public static final double MODULE_KD = 0.03;
 
     // NOTE: This may need additional tuning!
-    public static final double MODULE_KP = 0.46368;// 0.75628;// 0.7491; //.5;
-    public static final double MODULE_KD = 0.0066806;// 0.0057682; //0.0076954;
+    public static final double MODULE_KP = 0.3;// 0.75628;// 0.7491; //.5;
+    public static final double MODULE_KD = 0.0001;// 0.0057682; //0.0076954;
 
     // --------- Front Left Module --------- \\
     public static final int FL_DRIVE_ID = 3;
@@ -116,6 +117,10 @@ public final class Constants {
 
   }
 
+  public static class AimbotConstants {
+    public static final PIDController pidController = new PIDController(0.05,0.0,0.0012);
+  }
+
   public static class DriveConstants {
     // TODO: Make sure that this is correct - this is from the SDS website but needs
     // empirical verification
@@ -124,7 +129,7 @@ public final class Constants {
     public static final double MAX_ROBOT_RAD_VELOCITY = 12.0; // Approx. Measured rads/sec
 
     // TODO: ############## REPLACE PLACEHOLDERS ##############
-    public static final double MAX_MODULE_CURRENT = 10;
+    public static final double MAX_MODULE_CURRENT = 40;
 
     public static final double TRACK_WIDTH = Units.inchesToMeters(25);
     public static final double WHEEL_BASE = Units.inchesToMeters(25);
@@ -155,7 +160,7 @@ public final class Constants {
   }
 
   public static final class PathPlannerConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0, 0.2);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0, 0);
     public static final PIDConstants ROTATION_PID = new PIDConstants(5, 0, 0.2);
 
     public static final PPHolonomicDriveController HOLONOMIC_FOLLOWER_CONTROLLER = new PPHolonomicDriveController(

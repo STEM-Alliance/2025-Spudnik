@@ -78,8 +78,8 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public enum RotationStyle {
         Driver,
-        AutoSpeaker,
-        AutoShuttle
+        Home,
+        Aimbot
     }
 
     private RotationStyle rotationStyle = RotationStyle.Driver;
@@ -259,10 +259,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setChassisSpeedsAUTO(ChassisSpeeds speeds) {
         double tmp = speeds.vxMetersPerSecond;
-        speeds.vxMetersPerSecond = speeds.vyMetersPerSecond;
-        speeds.vyMetersPerSecond = tmp;
+        speeds.vxMetersPerSecond = -speeds.vyMetersPerSecond;
+        speeds.vyMetersPerSecond = -tmp;
         tmp = speeds.omegaRadiansPerSecond;
-        speeds.omegaRadiansPerSecond *= -1;
+        // speeds.omegaRadiansPerSecond *= -1;
         SwerveModuleState[] states = DriveConstants.KINEMATICS.toSwerveModuleStates(speeds);
         setModules(states);
     }

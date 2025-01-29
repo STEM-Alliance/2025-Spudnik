@@ -9,11 +9,18 @@ import frc.robot.commands.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
+
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.DoubleSupplier;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.*;
  */
 public class RobotContainer {
 
+
     private final CommandXboxController driverXbox = new CommandXboxController(
             ControllerConstants.DRIVER_CONTROLLER_PORT);
     private final CommandXboxController operatorXbox = new CommandXboxController(
@@ -39,19 +47,25 @@ public class RobotContainer {
     // private final CommandXboxController debugXbox = new CommandXboxController(0);
 
     private final SendableChooser<Command> autoChooser;
+    private PhotonCamera m_photonCamera = new PhotonCamera("Cam3WFOV");
 
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
+    // private final PhotonVisionSubsystem m_photonVisionSubsystem3 = new PhotonVisionSubsystem(swerveDriveSubsystem);
+
+    private final LEDSubsystem ledSubsystem = new LEDSubsystem(new AddressableLED(0));
+
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
     private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
-    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID());
+    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(), m_photonCamera);
 
     /*
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         // Configure the trigger bindings
+
         configureBindings();
 
         DataLogManager.logNetworkTables(true);
@@ -83,7 +97,17 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-       
+    //    driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem, m_photonCamera));
+       driverXbox.y().onTrue(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Aimbot);
+       })).onFalse(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+       }));
+       driverXbox.b().onTrue(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
+       })).onFalse(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+       }));
     }
 
     /**
