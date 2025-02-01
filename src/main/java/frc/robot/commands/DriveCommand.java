@@ -1,16 +1,20 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Rotation;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.*;
@@ -132,8 +136,9 @@ public class DriveCommand extends Command {
             case Home:
 
                 if (result.hasTargets()) {
-                    double yaw = getResultYaw(result);
+                    double yaw = getResultYaw(result);                    
                     SmartDashboard.putNumber("Target Yaw", yaw);
+
                     double deltaYaw = AimbotConstants.pidController.calculate(yaw, 0);
                     zSpeed = -deltaYaw;
 
@@ -142,6 +147,57 @@ public class DriveCommand extends Command {
                    
                     SmartDashboard.putNumber("Xspeed", xSpeed);
                     SmartDashboard.putNumber("Yspeed", ySpeed);
+                }
+                speeds = new ChassisSpeeds(-xSpeed, ySpeed, -zSpeed);
+
+                break;
+            case AimLeft:
+
+                if (result.hasTargets()) {
+                    double distance = result.getBestTarget().getBestCameraToTarget().getMeasureX().baseUnitMagnitude();
+                    double xOffset = Units.inchesToMeters(6.5);
+                    double angleOffset = Math.atan(xOffset/distance);
+
+                    double yaw = getResultYaw(result);
+                    SmartDashboard.putNumber("Target Yaw", yaw);
+                    double deltaYaw = AimbotConstants.pidController.calculate(yaw - Units.radiansToDegrees(angleOffset), 0);
+                    zSpeed = -deltaYaw;
+
+                    xSpeed = xbox.getLeftY() * Math.sin(Math.toRadians(-deltaYaw) + angleOffset);
+                    ySpeed = xbox.getLeftY() * Math.cos(Math.toRadians(-deltaYaw) + angleOffset);
+                
+                    SmartDashboard.putNumber("Xspeed", xSpeed);
+                    SmartDashboard.putNumber("Yspeed", ySpeed);
+                } else {
+                    xSpeed = 0;
+                    ySpeed = xbox.getLeftY();
+                    zSpeed = 0;
+                }
+
+                speeds = new ChassisSpeeds(-xSpeed, ySpeed, -zSpeed);
+
+                break;
+            case AimRight:
+
+                if (result.hasTargets()) {
+                    double distance = result.getBestTarget().getBestCameraToTarget().getMeasureX().baseUnitMagnitude();
+                    double xOffset = Units.inchesToMeters(6.5);
+                    double angleOffset = Math.atan(xOffset/distance);
+
+                    double yaw = getResultYaw(result);
+                    SmartDashboard.putNumber("Target Yaw", yaw);
+                    double deltaYaw = AimbotConstants.pidController.calculate(yaw + Units.radiansToDegrees(angleOffset), 0);
+                    zSpeed = -deltaYaw;
+
+                    xSpeed = xbox.getLeftY() * Math.sin(Math.toRadians(-deltaYaw) - angleOffset);
+                    ySpeed = xbox.getLeftY() * Math.cos(Math.toRadians(-deltaYaw) - angleOffset);
+                
+                    SmartDashboard.putNumber("Xspeed", xSpeed);
+                    SmartDashboard.putNumber("Yspeed", ySpeed);
+                } else {
+                    xSpeed = 0;
+                    ySpeed = xbox.getLeftY();
+                    zSpeed = 0;
                 }
                 speeds = new ChassisSpeeds(-xSpeed, ySpeed, -zSpeed);
 
@@ -178,6 +234,8 @@ public class DriveCommand extends Command {
         }
     }
 
+ 
+    
     private double getResultYaw(PhotonPipelineResult result) {
         return result.getBestTarget().getYaw();
     }

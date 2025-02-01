@@ -52,7 +52,7 @@ public class RobotContainer {
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     // private final PhotonVisionSubsystem m_photonVisionSubsystem3 = new PhotonVisionSubsystem(swerveDriveSubsystem);
 
-    private final LEDSubsystem ledSubsystem = new LEDSubsystem(new AddressableLED(0));
+    // private final LEDSubsystem ledSubsystem = new LEDSubsystem(new AddressableLED(0));
 
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
@@ -105,6 +105,16 @@ public class RobotContainer {
        }));
        driverXbox.b().onTrue(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
+       })).onFalse(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+       }));
+       driverXbox.leftBumper().onTrue(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.AimLeft);
+       })).onFalse(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+       }));
+       driverXbox.rightBumper().onTrue(new InstantCommand(() -> {
+        swerveDriveSubsystem.setRotationStyle(RotationStyle.AimRight);
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));

@@ -79,7 +79,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public enum RotationStyle {
         Driver,
         Home,
-        Aimbot
+        Aimbot,
+        AimLeft,
+        AimRight
     }
 
     private RotationStyle rotationStyle = RotationStyle.Driver;
@@ -219,8 +221,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        Pose2d p = odometry.getEstimatedPosition();
-        return p;
+        Pose2d pose = odometry.getEstimatedPosition().rotateBy(new Rotation2d(Math.PI));
+        Pose2d flippedPose = new Pose2d(pose.getX(), -pose.getY(), pose.getRotation().times(-1));
+        return flippedPose;
     }
 
     public void resetOdometry(Pose2d pose) {
