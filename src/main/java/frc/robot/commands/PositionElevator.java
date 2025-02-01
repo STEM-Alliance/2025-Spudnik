@@ -31,7 +31,7 @@ public class PositionElevator extends Command {
   public void execute() {
     elevatorSubsystem.setPosition(elevatorHeight);
   }
-.
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

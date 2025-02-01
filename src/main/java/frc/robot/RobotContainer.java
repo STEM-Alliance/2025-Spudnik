@@ -10,6 +10,7 @@ import frc.robot.commands.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import frc.robot.subsystems.*;
 
+import java.lang.management.OperatingSystemMXBean;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -81,10 +82,14 @@ public class RobotContainer {
      * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
      * PS4} controllers or
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
+     * joysticks}. 
      */
     private void configureBindings() {
-       
+       operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
+       operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
+       operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
+       operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
+       elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
     }
 
     /**
@@ -105,6 +110,6 @@ public class RobotContainer {
     }
 
     public CommandXboxController getOperatorXbox() {
-        return operatorXbox;
+        return operatorXbox; // operats x box
     }
 }

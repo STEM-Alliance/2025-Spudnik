@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+
+import java.util.concurrent.ConcurrentHashMap.KeySetView;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -157,9 +160,31 @@ public final class Constants {
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
     public static final double ELEVATOR_SPEED_LIMIT = 0.25;
     public static final double ELEVATOR_PARK_HEIGHT = 0.1;
+    public static final double ELEVATOR_SPEED_MODIFIER = 0.1;
+    public static final double LV1 = 0; //tween this value
+    public static final double LV2 = 0; //tween this value
+    public static final double LV3 = 0; //tween this value
+    public static final double LV4 = 0; //tween this value
+    public static final int CORAL_LEADER_PORT = 12;
+    public static final int CORAL_FOLLOWER_PORT = 13;
+  
+
+    //pid valuse
+    public static final double kP = 0.00001; //need to toon
+    public static final double kI = 0; //may not use
+    public static final double kD = 0; //may not use
+    public static final double PID_TOLERANCE = 0.1;
+    // feed forward values
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
   }
   public static class CommonConstants {
     public static final boolean LOG_INTO_FILE_ENABLED = true;
+  }
+
+  public static class AlgaeConstants{
+    public static final int ALGAE_INTAKE_PORT = 14;
   }
 
   public static final class PathPlannerConstants {
