@@ -81,7 +81,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setPosition(double goalPosition){
     inTolerance = pidController.atSetpoint();
     pidController.setSetpoint(-goalPosition);
-
+    
     double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), goalPosition);
     double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
     double speed = pidOutput + feedforwardOutput;
@@ -105,10 +105,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public double getElevatorPosition(){
     return elevatorLeader.getEncoder().getPosition();
   }
-  public void intakecoral(double speed){
+  public void intakeCoral(double speed){
     coralLeader.set(speed);
   }
-  public void placecoral(double speed){
+  public void placeCoral(double speed){
     coralLeader.set(-speed);
   }
 }

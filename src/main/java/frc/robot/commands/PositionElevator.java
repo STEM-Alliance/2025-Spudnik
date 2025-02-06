@@ -35,12 +35,13 @@ public class PositionElevator extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
+    // TODO: CHECK
+    // elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.getInTolerance();
   }
 }
