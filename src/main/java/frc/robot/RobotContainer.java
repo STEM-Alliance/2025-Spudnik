@@ -14,6 +14,7 @@ import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.lang.management.OperatingSystemMXBean;
 import java.util.function.DoubleSupplier;
 
 import org.photonvision.PhotonCamera;
@@ -54,6 +55,7 @@ public class RobotContainer {
 
     // private final LEDSubsystem ledSubsystem = new LEDSubsystem(new AddressableLED(0));
 
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
@@ -95,8 +97,10 @@ public class RobotContainer {
      * PS4} controllers or
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
+     * joysticks}. 
      */
     private void configureBindings() {
+<<<<<<< HEAD
     //    driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem, m_photonCamera));
        driverXbox.y().onTrue(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Aimbot);
@@ -118,6 +122,13 @@ public class RobotContainer {
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
+=======
+       operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
+       operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
+       operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
+       operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
+       elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
+>>>>>>> Elevator_v1
     }
 
     /**
@@ -139,5 +150,6 @@ public class RobotContainer {
 
     public CommandXboxController getOperatorXbox() {
         return operatorXbox;
+        return operatorXbox; // operats x box
     }
 }
