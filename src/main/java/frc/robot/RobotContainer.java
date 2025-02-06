@@ -96,11 +96,9 @@ public class RobotContainer {
      * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
      * PS4} controllers or
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
      * joysticks}. 
      */
     private void configureBindings() {
-<<<<<<< HEAD
     //    driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem, m_photonCamera));
        driverXbox.y().onTrue(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Aimbot);
@@ -122,13 +120,11 @@ public class RobotContainer {
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
-=======
        operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
        operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
        operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
        operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
->>>>>>> Elevator_v1
     }
 
     /**
@@ -149,7 +145,6 @@ public class RobotContainer {
     }
 
     public CommandXboxController getOperatorXbox() {
-        return operatorXbox;
         return operatorXbox; // operats x box
     }
 }
