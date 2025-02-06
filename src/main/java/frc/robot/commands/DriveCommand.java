@@ -7,6 +7,8 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.*;
@@ -50,6 +52,8 @@ public class DriveCommand extends Command {
 
         dsratelimiter.reset(SLOWMODE_MULT);
 
+        // AimbotConstants.skewController.enableContinuousInput(, );
+
         addRequirements(swerveSubsystem);
     }
 
@@ -83,7 +87,7 @@ public class DriveCommand extends Command {
         double zSpeed = -DeadBand(xbox.getRightX(), 0.15);
         double xSpeed = -xySpeed.getX(); // xbox.getLeftX();
         double ySpeed = xySpeed.getY(); // xbox.getLeftY();
-
+        
         // System.out.println("DRIVE!!");
 
         // double mag_xy = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
@@ -123,9 +127,13 @@ public class DriveCommand extends Command {
 
                 if (result.hasTargets()) {
                     double yaw = getResultYaw(result);
-                    SmartDashboard.putNumber("Target Yaw", yaw);
+                    
+
+
+                    
                     double deltaYaw = AimbotConstants.pidController.calculate(yaw, 0);
                     zSpeed = -deltaYaw;
+
                 }
 
                 speeds = ChassisSpeeds.fromFieldRelativeSpeeds(-ySpeed, xSpeed, zSpeed,
@@ -136,19 +144,38 @@ public class DriveCommand extends Command {
             case Home:
 
                 if (result.hasTargets()) {
-                    double yaw = getResultYaw(result);                    
-                    SmartDashboard.putNumber("Target Yaw", yaw);
+                    double yaw = getResultYaw(result);           
+                    double skew = getSkew(result);
+                    double deltaX;
+                             
+                    // SmartDashboard.putNumber("Target Yaw", yaw);
 
                     double deltaYaw = AimbotConstants.pidController.calculate(yaw, 0);
                     zSpeed = -deltaYaw;
+                    // xSpeed = xbox.getLeftY() * (Math.sin(Math.toRadians(-deltaYaw)) - AimbotConstants.skewController.calculate(skew, 180));
 
                     xSpeed = xbox.getLeftY() * Math.sin(Math.toRadians(-deltaYaw));
                     ySpeed = xbox.getLeftY() * Math.cos(Math.toRadians(-deltaYaw));
-                   
+                
                     SmartDashboard.putNumber("Xspeed", xSpeed);
                     SmartDashboard.putNumber("Yspeed", ySpeed);
                 }
                 speeds = new ChassisSpeeds(-xSpeed, ySpeed, -zSpeed);
+
+                // if (result.hasTargets()) {
+                //     double yaw = getResultYaw(result);                    
+                //     SmartDashboard.putNumber("Target Yaw", yaw);
+
+                //     double deltaYaw = AimbotConstants.pidController.calculate(yaw, 0);
+                //     zSpeed = -deltaYaw;
+
+                //     xSpeed = xbox.getLeftY() * Math.sin(Math.toRadians(-deltaYaw));
+                //     ySpeed = xbox.getLeftY() * Math.cos(Math.toRadians(-deltaYaw));
+                   
+                //     SmartDashboard.putNumber("Xspeed", xSpeed);
+                //     SmartDashboard.putNumber("Yspeed", ySpeed);
+                // }
+                // speeds = new ChassisSpeeds(-xSpeed, ySpeed, -zSpeed);
 
                 break;
             case AimLeft:
@@ -234,7 +261,9 @@ public class DriveCommand extends Command {
         }
     }
 
- 
+    private double getSkew(PhotonPipelineResult result) {
+        return Units.radiansToDegrees(result.getBestTarget().getBestCameraToTarget().getRotation().getZ());
+    }
     
     private double getResultYaw(PhotonPipelineResult result) {
         return result.getBestTarget().getYaw();
