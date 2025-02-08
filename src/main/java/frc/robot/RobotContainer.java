@@ -43,6 +43,7 @@ public class RobotContainer {
 
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
@@ -90,8 +91,11 @@ public class RobotContainer {
        operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
        operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
+       operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {algaeSubsystem.intakeAlgae();
+        }));
+        operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
+        }));
     }
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *

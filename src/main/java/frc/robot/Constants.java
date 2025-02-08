@@ -179,6 +179,13 @@ public final class Constants {
 
   public static class AlgaeConstants{
     public static final int ALGAE_INTAKE_PORT = 14;
+    public static final int ALGAE_MANIP_PORT = 15;
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
+    public static final double ALGAE_HOLD_SPEED = 0.2; //20 percent
+    public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
+    public static final double ALGAE_PLACE_SPEED = -0.2;
   }
 
   public static final class PathPlannerConstants {
