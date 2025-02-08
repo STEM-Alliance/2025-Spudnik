@@ -44,6 +44,8 @@ public class RobotContainer {
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    //need can id of sensor to declare next line
+    //private final TofDistanceSubsystem tofDistanceSubsystem = new TofDistanceSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
@@ -91,9 +93,9 @@ public class RobotContainer {
        operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
        operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
-       operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {algaeSubsystem.intakeAlgae();
+       operatorXbox.rightTrigger().onTrue(new InstantCommand(() -> {algaeSubsystem.intakeAlgae();
         }));
-        operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
+        operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
         }));
     }
     /**
