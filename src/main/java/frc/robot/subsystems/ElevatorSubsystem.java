@@ -15,7 +15,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -30,6 +32,46 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private Boolean inTolerance = false;
   private ElevatorFeedforward feedforward;
+
+  public enum ElevatorHeights {
+
+    // TODO: FIND REAL VALUES
+    L0(0.1),
+    L1(Units.inchesToMeters(18)),
+    L2(Units.inchesToMeters(31.875)),
+    L3(Units.inchesToMeters(47.625)),
+    L4(Units.inchesToMeters(72));
+
+    private double height;
+
+    private ElevatorHeights(double height) {
+      this.height = height;
+    }
+  }
+
+  private ElevatorHeights elevatorHeights = ElevatorHeights.L0;
+
+  public ElevatorHeights getElevatorHeights() {
+    return elevatorHeights;
+  }
+
+  public void setElevatorHeights(ElevatorHeights elevatorHeights) {
+    this.elevatorHeights = elevatorHeights;
+    SmartDashboard.putString("Elevator Position", elevatorHeights.name());
+    SmartDashboard.putBoolean("L1", elevatorHeights.ordinal() > 0);
+    SmartDashboard.putBoolean("L2", elevatorHeights.ordinal() > 1);
+    SmartDashboard.putBoolean("L3", elevatorHeights.ordinal() > 2);
+    SmartDashboard.putBoolean("L4", elevatorHeights.ordinal() > 3);
+    
+  }
+
+  public void up() {
+    setElevatorHeights(ElevatorHeights.values()[Math.min(ElevatorHeights.values().length - 1, elevatorHeights.ordinal() + 1)]);;
+  }
+
+  public void down() {
+    setElevatorHeights(ElevatorHeights.values()[Math.max(0, elevatorHeights.ordinal() - 1)]);
+  }
 
   public ElevatorSubsystem() {
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
@@ -78,10 +120,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorLeader.getEncoder().setPosition(0);
 
   }
+
   public void setPosition(double goalPosition){
     inTolerance = pidController.atSetpoint();
     pidController.setSetpoint(-goalPosition);
-    
+
     double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), goalPosition);
     double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
     double speed = pidOutput + feedforwardOutput;
@@ -96,6 +139,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
   }
+
+  public void setPosition(ElevatorHeights elevatorHeight) {
+
+    inTolerance = pidController.atSetpoint();
+    pidController.setSetpoint(-elevatorHeight.height);
+
+    double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), elevatorHeight.height);
+    double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
+    double speed = pidOutput + feedforwardOutput;
+    if (speed > 1){
+      speed = 1;
+    }else if(speed < -1){
+        speed = -1;
+      }
+    if(elevatorLimitSwitch.get() && speed > 0){
+      speed = 0;
+      zeroElevator();
+    }
+    elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
+  }
+
   public void StopElevator(){
     elevatorLeader.stopMotor();
   }
@@ -110,5 +174,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   public void placeCoral(double speed){
     coralLeader.set(-speed);
+  }
+  public static double getPostHeight(ElevatorHeights height) {
+    return height.height;
   }
 }

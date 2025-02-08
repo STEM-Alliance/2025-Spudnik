@@ -20,6 +20,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -64,6 +66,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoubleLogEntry chassisRotX;
     private DoubleLogEntry chassisRotY;
     private DoubleLogEntry chassisRotZ;
+
+    StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
 
     PowerDistribution pdh = new PowerDistribution(1, ModuleType.kRev);
     int[] pdh_channels = {
@@ -177,6 +181,8 @@ public class SwerveSubsystem extends SubsystemBase {
         // // If no alliance provided, just go with blue
         field.setRobotPose(getPose());
 
+        robotPose.set(getPose());
+
         // }
 
         SmartDashboard.putData("Field", field);
@@ -223,7 +229,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         Pose2d pose = odometry.getEstimatedPosition().rotateBy(new Rotation2d(Math.PI));
         Pose2d flippedPose = new Pose2d(pose.getX(), -pose.getY(), pose.getRotation().times(-1));
-        return flippedPose;
+        return odometry.getEstimatedPosition();
     }
 
     public void resetOdometry(Pose2d pose) {

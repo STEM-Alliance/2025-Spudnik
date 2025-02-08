@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Print"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Collecter"

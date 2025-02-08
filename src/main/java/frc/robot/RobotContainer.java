@@ -8,8 +8,14 @@ import frc.robot.Constants.*;
 import frc.robot.commands.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorHeights;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
 
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
@@ -67,6 +73,11 @@ public class RobotContainer {
      */
     public RobotContainer() {
         // Configure the trigger bindings
+        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L0))));
+        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L1))));
+        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L2))));
+        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L3))));
+        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L4))));
 
         configureBindings();
 
@@ -77,6 +88,7 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         swerveDriveSubsystem.setDefaultCommand(normalDrive);
+
     }
 
     // Command shootAction =
@@ -106,6 +118,11 @@ public class RobotContainer {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
        driverXbox.b().onTrue(new InstantCommand(() -> {
+        // Notification notification = new Notification();
+        // notification.setLevel(NotificationLevel.INFO);
+        // notification.setTitle("State");
+        // notification.setDescription("Changed to \"Homing\"");
+        // Elastic.sendNotification(notification);
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
@@ -120,10 +137,12 @@ public class RobotContainer {
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
-       operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
-       operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
-       operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
-       operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
+       operatorXbox.povUp().onTrue(new InstantCommand(() -> {
+        elevatorSubsystem.up();
+       }));
+       operatorXbox.povDown().onTrue(new InstantCommand(() -> {
+        elevatorSubsystem.down();
+       }));
        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
     }
 

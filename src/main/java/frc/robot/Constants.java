@@ -160,10 +160,6 @@ public final class Constants {
     public static final double ELEVATOR_SPEED_LIMIT = 0.25;
     public static final double ELEVATOR_PARK_HEIGHT = 0.1;
     public static final double ELEVATOR_SPEED_MODIFIER = 0.1;
-    public static final double LV1 = 0; //tween this value
-    public static final double LV2 = 0; //tween this value
-    public static final double LV3 = 0; //tween this value
-    public static final double LV4 = 0; //tween this value
     public static final int CORAL_LEADER_PORT = 12;
     public static final int CORAL_FOLLOWER_PORT = 13;
   

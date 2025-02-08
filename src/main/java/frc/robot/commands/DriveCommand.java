@@ -98,7 +98,7 @@ public class DriveCommand extends Command {
 
         xSpeed *= DriveConstants.XY_SPEED_LIMIT * DriveConstants.MAX_ROBOT_VELOCITY;
         ySpeed *= DriveConstants.XY_SPEED_LIMIT * DriveConstants.MAX_ROBOT_VELOCITY;
-        zSpeed *= DriveConstants.Z_SPEED_LIMIT * DriveConstants.MAX_ROBOT_RAD_VELOCITY;
+        zSpeed *= DriveConstants.Z_SPEED_LIMIT  * DriveConstants.MAX_ROBOT_RAD_VELOCITY;
 
         // double dmult = dsratelimiter.calculate(xbox.getRightBumper() ? 1.0 :
         // SLOWMODE_MULT);
@@ -142,7 +142,7 @@ public class DriveCommand extends Command {
                                         .getRadians()));
                 break;
             case Home:
-
+                
                 if (result.hasTargets()) {
                     double yaw = getResultYaw(result);           
                     double skew = getSkew(result);
