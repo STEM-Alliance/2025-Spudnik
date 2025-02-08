@@ -71,11 +71,11 @@ ALL motor will have current limits setup. Below is a table of the current limits
 # 2025 Controls
 ## Drive Controller (Port 0)
 *A = 
-*B = 
+*B = Drive towards AprilTag (RotationStyle.Home) - when held
 *X = 
-*Y = 
-*Left bumper = 
-*Right bumper = 
+*Y = Field orientated drive with aim at AprilTag (RotationSyle.Aimbot) - when held
+*Left bumper = Line up on left post (RotationSyle.AimLeft) - when held
+*Right bumper = Line up on right post (RotationSyle.AimRight) - when held
 *Left trigger = 
 *Right rigger = 
 *Left stick = translate
@@ -86,15 +86,15 @@ ALL motor will have current limits setup. Below is a table of the current limits
 *POV right = 
 
 ## Aux Controller (Port 1)
-*A = 
-*B = 
-*X = 
-*Y = 
+*A = Coral Level 1
+*B = Coral Level 2
+*X = Coral Level 3
+*Y = Coral Level 4
 *Left bumper = 
 *Right bumper = 
-*Left trigger = 
-*Right trigger = 
-*Left stick = 
+*Left trigger = Place Alage
+*Right trigger = Intake Algae
+*Left stick = Manual Elevator (on y-axis)
 *Right stick = 
 *POV up = 
 *POV down = 
