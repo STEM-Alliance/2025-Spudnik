@@ -70,33 +70,35 @@ ALL motor will have current limits setup. Below is a table of the current limits
 
 # 2025 Controls
 ## Drive Controller (Port 0)
-*A = 
-*B = Drive towards AprilTag (RotationStyle.Home) - when held
-*X = 
-*Y = Field orientated drive with aim at AprilTag (RotationSyle.Aimbot) - when held
-*Left bumper = Line up on left post (RotationSyle.AimLeft) - when held
-*Right bumper = Line up on right post (RotationSyle.AimRight) - when held
-*Left trigger = 
-*Right rigger = 
-*Left stick = translate
-*Right stick = rotate
-*POV up = 
-*POV down = 
-*POV left = 
-*POV right = 
+ - A = 
+ - B = Drive towards AprilTag (RotationStyle.Home) - when held
+ - X = 
+ - Y = Field orientated drive with aim at AprilTag (RotationSyle.Aimbot) - when held
+ - Left bumper = Line up on left post (RotationSyle.AimLeft) - when held
+ - Right bumper = Line up on right post (RotationSyle.AimRight) - when held
+ - Left trigger = 
+ - Right trigger = Place coral (intake is always running unless limit switch)
+ - Left stick = translate
+ - Right stick = rotate
+ - POV up = 
+ - POV down = 
+ - POV left = 
+ - POV right = 
 
 ## Aux Controller (Port 1)
-*A = Coral Level 1
-*B = Coral Level 2
-*X = Coral Level 3
-*Y = Coral Level 4
-*Left bumper = 
-*Right bumper = 
-*Left trigger = Place Alage
-*Right trigger = Intake Algae
-*Left stick = Manual Elevator (on y-axis)
-*Right stick = 
-*POV up = 
-*POV down = 
-*POV left = 
-*POV right = 
+ - A = Coral Level 1
+ - B = Coral Level 2
+ - X = Coral Level 3
+ - Y = Coral Level 4
+ - Left bumper = 
+ - Right bumper = 
+ - Left trigger = Place Algae
+ - Right trigger = Intake Algae
+ - Left stick = Manual Elevator (on y-axis)
+ - Right stick =
+ - Button 7 = Funnel drop (TODO)
+ - Button 8 = Climb (TODO)
+ - POV up = 
+ - POV down = 
+ - POV left = 
+ - POV right = 
