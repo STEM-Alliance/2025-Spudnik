@@ -97,6 +97,10 @@ public class RobotContainer {
         }));
         operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
         }));
+        driverXbox.rightTrigger().onTrue(new InstantCommand(() -> {elevatorSubsystem.placeCoral();
+        }));
+        driverXbox.rightTrigger().onFalse(new InstantCommand(() -> {elevatorSubsystem.intakeCoral();
+        }));
     }
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -27,6 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkMax coralLeader;
   private final SparkMax coralFollower;
   private final DigitalInput elevatorLimitSwitch;
+  private final DigitalInput intakeLimitSwitch;
   private final PIDController pidController;
   private Boolean inTolerance = false;
   private ElevatorFeedforward feedforward;
@@ -42,6 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorFollowerConfig.inverted(false);
     elevatorFollowerConfig.follow(elevatorLeader, true);
     elevatorLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LIMIT_SWITCH);
+    intakeLimitSwitch = new DigitalInput(ElevatorConstants.INTAKE_LIMIT_SWITCH);
 
     coralLeader = new SparkMax(ElevatorConstants.CORAL_LEADER_PORT, MotorType.kBrushless);
     coralFollower = new SparkMax(ElevatorConstants.CORAL_FOLLOWER_PORT, MotorType.kBrushless);
@@ -61,6 +63,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    intakeCoral();
   }
   public void elevatorMove(double Speed) {
     if ((elevatorLimitSwitch.get() && Speed > 0)
@@ -105,10 +108,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   public double getElevatorPosition(){
     return elevatorLeader.getEncoder().getPosition();
   }
-  public void intakeCoral(double speed){
-    coralLeader.set(speed);
+  public void intakeCoral(){
+    if (!intakeLimitSwitch.get()) {
+    coralLeader.set(ElevatorConstants.CORAL_INTAKE_SPEED);
+    } else {
+      coralLeader.set(0);
+    }
   }
-  public void placeCoral(double speed){
-    coralLeader.set(-speed);
+  public void placeCoral(){
+    coralLeader.set(ElevatorConstants.CORAL_PLACE_SPEED);
   }
 }

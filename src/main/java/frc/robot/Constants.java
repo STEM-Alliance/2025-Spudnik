@@ -150,6 +150,7 @@ public final class Constants {
     public static final int ELEVATOR_LEADER_PORT = 9;
     public static final int ELEVATOR_FOLLOWER_PORT = 10;
     public static final int ELEVATOR_LIMIT_SWITCH = 11;
+    public static final int INTAKE_LIMIT_SWITCH = 16;
     public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
     public static final double ELEVATOR_SPEED_LIMIT = 0.25;
@@ -161,6 +162,8 @@ public final class Constants {
     public static final double LV4 = 0; //tween this value
     public static final int CORAL_LEADER_PORT = 12;
     public static final int CORAL_FOLLOWER_PORT = 13;
+    public static final double CORAL_INTAKE_SPEED = 0.2;
+    public static final double CORAL_PLACE_SPEED = -0.2;
   
 
     //pid valuse
