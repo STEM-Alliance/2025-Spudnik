@@ -65,20 +65,29 @@ public class RobotContainer {
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
+    private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
+
+    private final ElevatorHeights cameraHeight = ElevatorHeights.L1;
+
     private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
     private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(), m_photonCamera);
 
     /*
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
+
     public RobotContainer() {
         // Configure the trigger bindings
-        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L0))));
-        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L1))));
-        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L2))));
-        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L3))));
-        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorSubsystem.getPostHeight(ElevatorHeights.L4))));
 
+        // TODO: Change Speed To Correct Value
+        NamedCommands.registerCommand("PlaceCoral", new InstantCommand(() -> elevatorSubsystem.placeCoral(0.5)));
+
+        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L0)));
+        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L1)));
+        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L2)));
+        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L3)));
+        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L4)));
+        
         configureBindings();
 
         DataLogManager.logNetworkTables(true);
@@ -110,6 +119,11 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}. 
      */
+
+    private void resetHeight() {
+        elevatorSubsystem.setElevatorHeights(cameraHeight);
+    }
+
     private void configureBindings() {
     //    driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem, m_photonCamera));
        driverXbox.y().onTrue(new InstantCommand(() -> {
@@ -118,31 +132,32 @@ public class RobotContainer {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
        driverXbox.b().onTrue(new InstantCommand(() -> {
-        // Notification notification = new Notification();
-        // notification.setLevel(NotificationLevel.INFO);
-        // notification.setTitle("State");
-        // notification.setDescription("Changed to \"Homing\"");
-        // Elastic.sendNotification(notification);
+        Notification notification = new Notification();
+        notification.setLevel(NotificationLevel.INFO);
+        notification.setTitle("State");
+        notification.setDescription("Changed to \"Homing\"");
+        Elastic.sendNotification(notification);
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
+
        driverXbox.leftBumper().onTrue(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.AimLeft);
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
+
        driverXbox.rightBumper().onTrue(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.AimRight);
        })).onFalse(new InstantCommand(() -> {
         swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
        }));
-       operatorXbox.povUp().onTrue(new InstantCommand(() -> {
-        elevatorSubsystem.up();
-       }));
-       operatorXbox.povDown().onTrue(new InstantCommand(() -> {
-        elevatorSubsystem.down();
-       }));
+
+       operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorHeights.L1));
+       operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorHeights.L2));
+       operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorHeights.L3));
+       operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorHeights.L4));
        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
     }
 

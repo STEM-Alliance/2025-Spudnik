@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Print"
+            "name": "L1"
           }
         },
         {
@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Collecter"
@@ -38,6 +44,12 @@
           "type": "path",
           "data": {
             "pathName": "CoralC"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]

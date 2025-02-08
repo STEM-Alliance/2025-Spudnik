@@ -141,7 +141,7 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         NamedCommands.registerCommand("namedCommand", new PrintCommand("Ran namedCommand"));
-
+        
         chassisAccelX = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/x");
         chassisAccelY = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/y");
         chassisAccelZ = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/z");

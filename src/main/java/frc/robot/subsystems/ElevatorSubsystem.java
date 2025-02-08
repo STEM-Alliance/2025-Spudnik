@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
 
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -57,23 +60,28 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setElevatorHeights(ElevatorHeights elevatorHeights) {
     this.elevatorHeights = elevatorHeights;
+    setPosition(elevatorHeights);
+    //VISUALS
     SmartDashboard.putString("Elevator Position", elevatorHeights.name());
     SmartDashboard.putBoolean("L1", elevatorHeights.ordinal() > 0);
     SmartDashboard.putBoolean("L2", elevatorHeights.ordinal() > 1);
     SmartDashboard.putBoolean("L3", elevatorHeights.ordinal() > 2);
     SmartDashboard.putBoolean("L4", elevatorHeights.ordinal() > 3);
-    
+   
   }
 
+  @Deprecated(forRemoval = true)
   public void up() {
     setElevatorHeights(ElevatorHeights.values()[Math.min(ElevatorHeights.values().length - 1, elevatorHeights.ordinal() + 1)]);;
   }
 
+  @Deprecated(forRemoval = true)
   public void down() {
     setElevatorHeights(ElevatorHeights.values()[Math.max(0, elevatorHeights.ordinal() - 1)]);
   }
 
   public ElevatorSubsystem() {
+
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
     elevatorFollower = new SparkMax(ElevatorConstants.ELEVATOR_FOLLOWER_PORT, MotorType.kBrushless);
     SparkMaxConfig elevatorLeaderConfig = new SparkMaxConfig();
@@ -98,7 +106,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     pidController.setTolerance(ElevatorConstants.PID_TOLERANCE);
     feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
-}
+
+    setElevatorHeights(ElevatorHeights.L0);
+
+  }
 
   @Override
   public void periodic() {
@@ -121,6 +132,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   }
 
+  @Deprecated
   public void setPosition(double goalPosition){
     inTolerance = pidController.atSetpoint();
     pidController.setSetpoint(-goalPosition);
@@ -133,7 +145,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }else if(speed < -1){
         speed = -1;
       }
-    if(elevatorLimitSwitch.get() && speed > 0){
+    if(elevatorLimitSwitch.get() && speed < 0){
       speed = 0;
       zeroElevator();
     }
@@ -148,14 +160,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), elevatorHeight.height);
     double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
     double speed = pidOutput + feedforwardOutput;
+    if (elevatorHeights == ElevatorHeights.L0) speed = -0.5;
     if (speed > 1){
       speed = 1;
     }else if(speed < -1){
         speed = -1;
       }
-    if(elevatorLimitSwitch.get() && speed > 0){
+    if(elevatorLimitSwitch.get() && speed < 0){
       speed = 0;
       zeroElevator();
+      //TODO: This only happens at the start; make it check every so often
+      if (elevatorHeight == ElevatorHeights.L0) {
+        setElevatorHeights(ElevatorHeights.L1);
+        Notification notification = new Notification();
+        notification.setLevel(NotificationLevel.INFO);
+        notification.setTitle("Elevator");
+        notification.setDescription("Elevator Zeroed");
+        Elastic.sendNotification(notification);
+      }
     }
     elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
   }

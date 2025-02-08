@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElasticSubsystem extends SubsystemBase {
   /** Creates a new ElasticSubsystem. */
-  public ElasticSubsystem() {}
+  public ElasticSubsystem() {
+    
+  }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
+    
   }
 }
