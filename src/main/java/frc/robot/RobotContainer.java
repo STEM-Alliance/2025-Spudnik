@@ -9,6 +9,7 @@ import frc.robot.commands.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import frc.robot.subsystems.*;
+import frc.robot.utils.ElasticSubsystem;
 
 import java.lang.management.OperatingSystemMXBean;
 import java.util.function.DoubleSupplier;
@@ -16,6 +17,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -43,6 +45,8 @@ public class RobotContainer {
 
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
+    private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
@@ -82,14 +86,30 @@ public class RobotContainer {
      * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
      * PS4} controllers or
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}. 
+     * joysticks}.
      */
     private void configureBindings() {
-       operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
-       operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
-       operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
-       operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
-       elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
+        operatorXbox.leftBumper()
+                .onTrue(new SequentialCommandGroup(
+                        new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem),
+                        new InstantCommand(() -> {
+                            operatorXbox.setRumble(RumbleType.kBothRumble, 1);
+                        }),
+                        new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+                        new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+                        new InstantCommand(() -> {
+                            operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+                        })));
+        operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setIntake(0.4);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.setIntake(0);
+        }));
+        operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
+        operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
+        operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
+        operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
+        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
     }
 
     /**

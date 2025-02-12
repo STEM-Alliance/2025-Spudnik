@@ -105,10 +105,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   public double getElevatorPosition(){
     return elevatorLeader.getEncoder().getPosition();
   }
-  public void intakeCoral(double speed){
+  
+  public void setIntake(double speed) {
     coralLeader.set(speed);
   }
-  public void placeCoral(double speed){
-    coralLeader.set(-speed);
+
+  public double getIntakeEncoderPosition() {
+    return coralLeader.getEncoder().getPosition();
+  }
+
+  public SparkMax getCoralFollower() {
+    return coralFollower;
   }
 }

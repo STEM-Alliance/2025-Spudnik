@@ -146,6 +146,12 @@ public final class Constants {
     public static final double XY_SPEED_LIMIT = 1.0;
     public static final double Z_SPEED_LIMIT = 1.0;
   }
+
+  public static final class CoralConstants {
+    public static final double ALIGN_DISTANCE = 5;
+    public static final double SENSOR_DISTANCE = 76; // in MM
+  }
+
   public static final class ElevatorConstants {
     public static final int ELEVATOR_LEADER_PORT = 9;
     public static final int ELEVATOR_FOLLOWER_PORT = 10;
