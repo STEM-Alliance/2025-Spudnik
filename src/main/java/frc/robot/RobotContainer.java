@@ -12,6 +12,7 @@ import frc.robot.subsystems.*;
 import frc.robot.utils.ElasticSubsystem;
 
 import java.lang.management.OperatingSystemMXBean;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -107,6 +108,15 @@ public class RobotContainer {
             elevatorSubsystem.setIntake(0.4);
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0);
+        }));
+        operatorXbox.leftTrigger().and(new BooleanSupplier() {
+
+			@Override
+			public boolean getAsBoolean() {
+				return operatorXbox.getLeftTriggerAxis() > 0.2;
+			}
+            
+        }).onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
         }));
         operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
         operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
