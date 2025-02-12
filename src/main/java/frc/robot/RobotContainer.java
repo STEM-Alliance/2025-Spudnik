@@ -47,6 +47,9 @@ public class RobotContainer {
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    //need can id of sensor to declare next line
+    //private final TofDistanceSubsystem tofDistanceSubsystem = new TofDistanceSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
@@ -111,7 +114,6 @@ public class RobotContainer {
         operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
         elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
     }
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *

@@ -27,6 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkMax coralLeader;
   private final SparkMax coralFollower;
   private final DigitalInput elevatorLimitSwitch;
+  private final DigitalInput intakeLimitSwitch;
   private final PIDController pidController;
   private Boolean inTolerance = false;
   private ElevatorFeedforward feedforward;
@@ -42,6 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorFollowerConfig.inverted(false);
     elevatorFollowerConfig.follow(elevatorLeader, true);
     elevatorLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LIMIT_SWITCH);
+    intakeLimitSwitch = new DigitalInput(ElevatorConstants.INTAKE_LIMIT_SWITCH);
 
     coralLeader = new SparkMax(ElevatorConstants.CORAL_LEADER_PORT, MotorType.kBrushless);
     coralFollower = new SparkMax(ElevatorConstants.CORAL_FOLLOWER_PORT, MotorType.kBrushless);
