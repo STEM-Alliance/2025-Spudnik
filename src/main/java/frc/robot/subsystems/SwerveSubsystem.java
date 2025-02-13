@@ -20,6 +20,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -65,6 +67,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoubleLogEntry chassisRotY;
     private DoubleLogEntry chassisRotZ;
 
+    StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
+
     PowerDistribution pdh = new PowerDistribution(1, ModuleType.kRev);
     int[] pdh_channels = {
             18, 19,
@@ -78,8 +82,10 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public enum RotationStyle {
         Driver,
-        AutoSpeaker,
-        AutoShuttle
+        Home,
+        Aimbot,
+        AimLeft,
+        AimRight
     }
 
     private RotationStyle rotationStyle = RotationStyle.Driver;
@@ -135,7 +141,7 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         NamedCommands.registerCommand("namedCommand", new PrintCommand("Ran namedCommand"));
-
+        
         chassisAccelX = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/x");
         chassisAccelY = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/y");
         chassisAccelZ = new DoubleLogEntry(DataLogManager.getLog(), "Chassis/acceleration/z");
@@ -174,6 +180,8 @@ public class SwerveSubsystem extends SubsystemBase {
         // } else {
         // // If no alliance provided, just go with blue
         field.setRobotPose(getPose());
+
+        robotPose.set(getPose());
 
         // }
 
@@ -219,8 +227,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        Pose2d p = odometry.getEstimatedPosition();
-        return p;
+        Pose2d pose = odometry.getEstimatedPosition().rotateBy(new Rotation2d(Math.PI));
+        Pose2d flippedPose = new Pose2d(pose.getX(), -pose.getY(), pose.getRotation().times(-1));
+        return odometry.getEstimatedPosition();
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -259,10 +268,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setChassisSpeedsAUTO(ChassisSpeeds speeds) {
         double tmp = speeds.vxMetersPerSecond;
-        speeds.vxMetersPerSecond = speeds.vyMetersPerSecond;
-        speeds.vyMetersPerSecond = tmp;
+        speeds.vxMetersPerSecond = -speeds.vyMetersPerSecond;
+        speeds.vyMetersPerSecond = -tmp;
         tmp = speeds.omegaRadiansPerSecond;
-        speeds.omegaRadiansPerSecond *= -1;
+        // speeds.omegaRadiansPerSecond *= -1;
         SwerveModuleState[] states = DriveConstants.KINEMATICS.toSwerveModuleStates(speeds);
         setModules(states);
     }
