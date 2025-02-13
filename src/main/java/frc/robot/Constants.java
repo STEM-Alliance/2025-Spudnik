@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -150,6 +151,13 @@ public final class Constants {
   public static final class CoralConstants {
     public static final double ALIGN_DISTANCE = 5;
     public static final double SENSOR_DISTANCE = 76; // in MM
+  }
+
+  public static final class ClimberConstants {
+    public static PIDController pidController = new PIDController(0.1, 0, 0);
+    public static final int climbMotorPort = 16;
+    public static final double motorTop = 20;
+    public static final double motorBottom = 0;
   }
 
   public static final class ElevatorConstants {

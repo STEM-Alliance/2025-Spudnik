@@ -49,6 +49,7 @@ public class RobotContainer {
     private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     //need can id of sensor to declare next line
     //private final TofDistanceSubsystem tofDistanceSubsystem = new TofDistanceSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
@@ -104,11 +105,13 @@ public class RobotContainer {
                         new InstantCommand(() -> {
                             operatorXbox.setRumble(RumbleType.kBothRumble, 0);
                         })));
+
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0.4);
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0);
         }));
+        
         operatorXbox.leftTrigger().and(new BooleanSupplier() {
 
 			@Override
@@ -118,6 +121,16 @@ public class RobotContainer {
             
         }).onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
         }));
+
+        operatorXbox.povUp().onTrue(new InstantCommand(() -> {
+            climberSubsystem.up();
+        }));
+
+        operatorXbox.povDown().onTrue(new InstantCommand(() -> {
+            climberSubsystem.down();
+        }));
+
+
         operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
         operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
         operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
