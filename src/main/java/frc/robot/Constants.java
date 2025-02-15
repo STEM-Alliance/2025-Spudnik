@@ -163,7 +163,7 @@ public final class Constants {
   public static final class ElevatorConstants {
     public static final int ELEVATOR_LEADER_PORT = 9;
     public static final int ELEVATOR_FOLLOWER_PORT = 10;
-    public static final int ELEVATOR_LIMIT_SWITCH = 11;
+    public static final int ELEVATOR_LIMIT_SWITCH = 0;
     public static final int INTAKE_LIMIT_SWITCH = 16;
     public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
@@ -174,8 +174,8 @@ public final class Constants {
     public static final double LV2 = 0; //tween this value
     public static final double LV3 = 0; //tween this value
     public static final double LV4 = 0; //tween this value
-    public static final int CORAL_LEADER_PORT = 12;
-    public static final int CORAL_FOLLOWER_PORT = 13;
+    public static final int CORAL_LEADER_PORT = 14;
+    public static final int CORAL_FOLLOWER_PORT = 15;
     public static final double CORAL_INTAKE_SPEED = 0.2;
     public static final double CORAL_PLACE_SPEED = -0.2;
   
@@ -195,8 +195,8 @@ public final class Constants {
   }
 
   public static class AlgaeConstants{
-    public static final int ALGAE_INTAKE_PORT = 14;
-    public static final int ALGAE_MANIP_PORT = 15;
+    public static final int ALGAE_INTAKE_PORT = 20;
+    public static final int ALGAE_MANIP_PORT = 19;
     public static final double kS = 0;
     public static final double kG = 0;
     public static final double kV = 0;
