@@ -33,7 +33,7 @@ public class AlignCoralCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setIntake(0.1);
+    elevatorSubsystem.setIntake(0.2);
   }
 
   // Called once the command ends or is interrupted.

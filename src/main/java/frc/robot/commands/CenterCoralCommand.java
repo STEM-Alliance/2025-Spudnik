@@ -38,7 +38,7 @@ public class CenterCoralCommand extends Command {
   @Override
   public void execute() {
     if (needsCentering) {
-        elevatorSubsystem.setIntake(-0.1);
+        elevatorSubsystem.setIntake(-0.2);
         if (distanceSensorSubsystem.get_distance() > CoralConstants.SENSOR_DISTANCE) {
           needsCentering = false;
         }

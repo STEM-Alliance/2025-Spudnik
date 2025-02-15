@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.ElevatorConstants;
@@ -17,6 +18,7 @@ public class PositionElevator extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevatorSubsystem = elevatorSubsystem;
     this.elevatorHeight = elevatorHeight;
+    SmartDashboard.putNumber("Elevator Height (A)", elevatorHeight);
     addRequirements(elevatorSubsystem);
   }
 
@@ -29,15 +31,16 @@ public class PositionElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Elevator Height (A)", elevatorHeight);
     elevatorSubsystem.setPosition(elevatorHeight);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // TODO: CHECK
-    // elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
-    
+    elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
+    SmartDashboard.putNumber("Elevator Height (A)", elevatorSubsystem.getElevatorPosition());
+
   }
 
   // Returns true when the command should end.

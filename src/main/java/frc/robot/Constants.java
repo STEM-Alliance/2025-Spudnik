@@ -165,23 +165,24 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOWER_PORT = 10;
     public static final int ELEVATOR_LIMIT_SWITCH = 0;
     public static final int INTAKE_LIMIT_SWITCH = 16;
-    public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
+    public static final double ELEVATOR_TOP_LIMIT = 120; //change to actual number
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
     public static final double ELEVATOR_SPEED_LIMIT = 0.25;
-    public static final double ELEVATOR_PARK_HEIGHT = 0.1;
-    public static final double ELEVATOR_SPEED_MODIFIER = 0.1;
-    public static final double LV1 = 0; //tween this value
-    public static final double LV2 = 0; //tween this value
-    public static final double LV3 = 0; //tween this value
-    public static final double LV4 = 0; //tween this value
+    public static final double ELEVATOR_PARK_HEIGHT = 16;
+    public static final double ELEVATOR_SPEED_MODIFIER = 0.5;
+    public static final double LV1 = 12; //tween this value
+    public static final double LV2 = 39; //tween this value
+    public static final double LV3 = 69; //tween this value
+    public static final double LV4 = 117; //tween this value
+    public static final double Intake = 1;
     public static final int CORAL_LEADER_PORT = 14;
     public static final int CORAL_FOLLOWER_PORT = 15;
     public static final double CORAL_INTAKE_SPEED = 0.2;
     public static final double CORAL_PLACE_SPEED = -0.2;
   
-
+ 
     //pid valuse
-    public static final double kP = 0.00001; //need to toon
+    public static final double kP = 0.01; //need to toon
     public static final double kI = 0; //may not use
     public static final double kD = 0; //may not use
     public static final double PID_TOLERANCE = 0.1;

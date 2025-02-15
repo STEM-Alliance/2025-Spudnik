@@ -9,6 +9,7 @@ import frc.robot.commands.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.ElasticSubsystem;
 
 import java.lang.management.OperatingSystemMXBean;
@@ -95,19 +96,21 @@ public class RobotContainer {
      */
     private void configureBindings() {
         operatorXbox.leftBumper()
+                .onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);}))
                 .onTrue(new SequentialCommandGroup(
-                        new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem),
-                        new InstantCommand(() -> {
-                            operatorXbox.setRumble(RumbleType.kBothRumble, 1);
-                        }),
-                        new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-                        new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-                        new InstantCommand(() -> {
-                            operatorXbox.setRumble(RumbleType.kBothRumble, 0);
-                        })));
+                            new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.3),
+                            // new InstantCommand(() -> {
+                            //     operatorXbox.setRumble(RumbleType.kBothRumble, 1);
+                            // }),
+                            new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+                            new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem)
+                            // new InstantCommand(() -> {
+                            //     operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+                            // })
+                        ));
 
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
-            elevatorSubsystem.setIntake(0.4);
+            elevatorSubsystem.setIntake(0.3);
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0);
         }));
@@ -131,12 +134,25 @@ public class RobotContainer {
         }));
 
 
-        operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
-        operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
-        operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
-        operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
-        elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
+        // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
+        // operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
+        // operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
+        // operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
+        
+
+        operatorXbox.a().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L1);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        operatorXbox.b().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L2);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        operatorXbox.x().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L3);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        operatorXbox.y().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L4);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        operatorXbox.button(7).onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+
+        //operatorXbox.button(8).onFalse(new PositionElevator(elevatorSubsystem, ElevatorConstants.ELEVATOR_PARK_HEIGHT));
+
+        //elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
+        //operatorXbox.leftStick().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L4);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+
     }
+   
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *

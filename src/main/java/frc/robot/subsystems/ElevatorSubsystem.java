@@ -11,6 +11,8 @@ import com.ctre.phoenix6.signals.MotorOutputStatusValue;
 import com.fasterxml.jackson.databind.deser.std.TokenBufferDeserializer;
 import com.google.flatbuffers.Constants;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -33,7 +35,28 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final PIDController pidController;
   private Boolean inTolerance = false;
   private ElevatorFeedforward feedforward;
-  private double tunekP = 0.00001;
+  private double tunekP = 0.1;
+
+  public enum ElevatorState {
+    Manual,
+    L1, 
+    L2, 
+    L3, 
+    L4,
+    Park,
+    Intake
+
+  }
+
+  private ElevatorState elevatorState = ElevatorState.Park;
+
+  public void setElevatorState(ElevatorState elevatorState) {
+    this.elevatorState = elevatorState;
+  }
+
+  public void resetElevatorState() {
+    this.elevatorState = ElevatorState.Park;
+  }
 
   public ElevatorSubsystem() {
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
@@ -41,22 +64,32 @@ public class ElevatorSubsystem extends SubsystemBase {
     SparkMaxConfig elevatorLeaderConfig = new SparkMaxConfig();
     elevatorLeaderConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     elevatorLeaderConfig.inverted(false);
+
+    elevatorLeader.configure(elevatorLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    
     SparkMaxConfig elevatorFollowerConfig = new SparkMaxConfig();
     elevatorFollowerConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     elevatorFollowerConfig.inverted(false);
     elevatorFollowerConfig.follow(elevatorLeader, true);
+    elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     elevatorLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LIMIT_SWITCH);
     intakeLimitSwitch = new DigitalInput(ElevatorConstants.INTAKE_LIMIT_SWITCH);
 
     coralLeader = new SparkMax(ElevatorConstants.CORAL_LEADER_PORT, MotorType.kBrushless);
+    
     coralFollower = new SparkMax(ElevatorConstants.CORAL_FOLLOWER_PORT, MotorType.kBrushless);
     SparkMaxConfig coralLeaderConfig = new SparkMaxConfig();
     coralLeaderConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     coralLeaderConfig.inverted(false);
+    coralLeader.configure(coralLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+
     SparkMaxConfig coralFollowerConfig = new SparkMaxConfig();
     coralFollowerConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     coralFollowerConfig.inverted(false);
     coralFollowerConfig.follow(coralLeader, true);
+    //TODO: DO NOT PUT BACK IN UNTIL FIXED
+    coralFollower.configure(coralFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
     pidController = new PIDController(tunekP, ElevatorConstants.kI, ElevatorConstants.kD);
     pidController.setTolerance(ElevatorConstants.PID_TOLERANCE);
@@ -69,16 +102,50 @@ public class ElevatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     pidController.setP(SmartDashboard.getNumber("TuneKp", 0));
     SmartDashboard.putNumber("Elevator Position", elevatorLeader.getEncoder().getPosition());
+    SmartDashboard.putString("Elevator State", elevatorState.name());
+    switch (elevatorState) {
+      case Park:
+        setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
+        break;
+      case L1:
+        setPosition(ElevatorConstants.LV1);
+        break;
+      case L2:
+        setPosition(ElevatorConstants.LV2);
+        break;
+      case L3:
+        setPosition(ElevatorConstants.LV3);
+        break;
+      case L4:
+        setPosition(ElevatorConstants.LV4);
+        break;
+      case Intake:
+        setPosition(ElevatorConstants.Intake);
+        break;
+      case Manual:
+        break;
+    }
   }
+
+  public ElevatorState getElevatorState() {
+    return elevatorState;
+  }
+
   public void elevatorMove(double Speed) {
-    if ((elevatorLimitSwitch.get() && Speed > 0)
-     || (elevatorLeader.getEncoder().getPosition() < ElevatorConstants.ELEVATOR_TOP_LIMIT)
-     || (elevatorLeader.getEncoder().getPosition() > ElevatorConstants.ELEVATOR_BOTTOM_LIMIT)){
+    if ((elevatorLimitSwitch.get() && Speed < 0)
+     || (elevatorLeader.getEncoder().getPosition() > ElevatorConstants.ELEVATOR_TOP_LIMIT)
+     || (elevatorLeader.getEncoder().getPosition() < ElevatorConstants.ELEVATOR_BOTTOM_LIMIT)){
       Speed = 0; //stops robot from killing itself
     }
     if (elevatorLimitSwitch.get()){
       zeroElevator(); //resets elevator encoder pos to 0
     }
+    
+    if (Speed > 1){
+      Speed = 1;
+    }else if(Speed < -1){
+        Speed = -1;
+      }
     elevatorLeader.set(Speed);
 
   }
@@ -98,11 +165,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     }else if(speed < -1){
         speed = -1;
       }
-    if(elevatorLimitSwitch.get() && speed > 0){
+    if(elevatorLimitSwitch.get() && speed < 0){
       speed = 0;
       zeroElevator();
     }
     elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
+    System.out.println(elevatorLeader.get());
   }
   public void StopElevator(){
     elevatorLeader.stopMotor();

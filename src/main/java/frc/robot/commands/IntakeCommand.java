@@ -16,8 +16,10 @@ public class IntakeCommand extends Command {
   private DistanceSensorSubsystem distanceSensorSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
   private boolean needsCentering = true;
+  private double speed = 0;
   /** Creates a new CenterCoral. */
-  public IntakeCommand(DistanceSensorSubsystem distanceSensorSubsystem, ElevatorSubsystem elevtorSubsystem) {
+  public IntakeCommand(DistanceSensorSubsystem distanceSensorSubsystem, ElevatorSubsystem elevtorSubsystem, double speed) {
+    this.speed = speed;
     this.distanceSensorSubsystem = distanceSensorSubsystem;
     this.elevatorSubsystem = elevtorSubsystem;
     SmartDashboard.putString("IntakeCommand", "Intake");
@@ -32,7 +34,7 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setIntake(0.4);
+    elevatorSubsystem.setIntake(speed);
   }
 
   // Called once the command ends or is interrupted.

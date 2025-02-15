@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -30,7 +31,10 @@ public class ManualElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.elevatorMove(speed.getAsDouble()*ElevatorConstants.ELEVATOR_SPEED_LIMIT);
+    if (Math.abs(speed.getAsDouble()) > 0.1) {
+      elevatorSubsystem.setElevatorState(ElevatorState.Manual);
+    }
+    elevatorSubsystem.elevatorMove(-speed.getAsDouble()*ElevatorConstants.ELEVATOR_SPEED_LIMIT);
   }
 
   // Called once the command ends or is interrupted.
