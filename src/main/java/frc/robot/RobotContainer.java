@@ -54,7 +54,7 @@ public class RobotContainer {
     // private final CommandXboxController debugXbox = new CommandXboxController(0);
 
     private final SendableChooser<Command> autoChooser;
-    private PhotonCamera m_photonCamera = new PhotonCamera("Cam3WFOV");
+    private PhotonCamera m_photonCamera = new PhotonCamera("driveCamera");
 
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     // private final PhotonVisionSubsystem m_photonVisionSubsystem3 = new PhotonVisionSubsystem(swerveDriveSubsystem);
