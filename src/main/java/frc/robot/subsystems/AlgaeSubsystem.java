@@ -9,8 +9,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeConstants;
+import frc.robot.Constants.ElevatorConstants;
 
 public class AlgaeSubsystem extends SubsystemBase {
   /** Creates a new AlgaeSubsystem. */
@@ -18,6 +20,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   public final SparkMax algaeManip;
   private ArmFeedforward feedforward;
   private double manipPosition;
+  private DigitalInput algaeLimitSwitch;
   public AlgaeSubsystem() {
     algaeIntake = new SparkMax(AlgaeConstants.ALGAE_INTAKE_PORT, MotorType.kBrushless);
     SparkMaxConfig AlgaeIntakeConfig = new SparkMaxConfig();
@@ -31,6 +34,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     algaeManip.getEncoder().setPosition(0);
     feedforward = new ArmFeedforward(AlgaeConstants.kS, AlgaeConstants.kG, AlgaeConstants.kV);
     double feedforwardOutput = feedforward.calculate(algaeManip.getEncoder().getPosition(), algaeManip.getEncoder().getVelocity());
+    algaeLimitSwitch = new DigitalInput(AlgaeConstants.ALGAE_LIMIT_SWITCH);
   }
 
   @Override
@@ -42,7 +46,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     algaeManip.setVoltage(feedforward.calculate(algaeManip.getEncoder().getPosition(), algaeManip.getEncoder().getVelocity()));
     manipPosition = algaeManip.getEncoder().getPosition();
     //check for current spike(when algae )
-    if (algaeManip.getOutputCurrent() > 80){; //TODO test current indicator,  80 is amps
+    if (algaeLimitSwitch.get()){; //TODO test current indicator,  80 is amps
       holdAlgae();
     }
   }

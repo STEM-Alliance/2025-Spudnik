@@ -204,6 +204,7 @@ public final class Constants {
     public static final double ALGAE_HOLD_SPEED = 0.2; //20 percent
     public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
     public static final double ALGAE_PLACE_SPEED = -0.2;
+    public static final int ALGAE_LIMIT_SWITCH = 1;
   }
 
   public static final class PathPlannerConstants {
