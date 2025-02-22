@@ -55,15 +55,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private ElevatorState elevatorState = ElevatorState.Park;
 
+  private void setElasticVisual(double height) {
+    SmartDashboard.putBoolean("Intake", height == -1);
+    SmartDashboard.putBoolean("L1", height > 0);
+    SmartDashboard.putBoolean("L2", height > 1);
+    SmartDashboard.putBoolean("L3", height > 2);
+    SmartDashboard.putBoolean("L4", height > 3);
+  }
+
   public void setElevatorState(ElevatorState elevatorState) {
     this.elevatorState = elevatorState;
+    
   }
 
   public void resetElevatorState() {
-    this.elevatorState = ElevatorState.Park;
+    setElevatorState(elevatorState.Park);
   }
 
   public ElevatorSubsystem(DistanceSensorSubsystem distanceSensorSubsystem) {
+    
+    setElasticVisual(0);
+
     this.distanceSensorSubsystem = distanceSensorSubsystem;
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
     elevatorFollower = new SparkMax(ElevatorConstants.ELEVATOR_FOLLOWER_PORT, MotorType.kBrushless);
@@ -115,27 +127,34 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (distanceSensorSubsystem.hasCoral()) {
       switch (elevatorState) {
         case Park:
+          setElasticVisual(0);
           setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
           break;
         case L1:
+          setElasticVisual(1);
           setPosition(ElevatorConstants.LV1);
           break;
         case L2:
+          setElasticVisual(2);
           setPosition(ElevatorConstants.LV2);
           break;
         case L3:
+          setElasticVisual(3);
           setPosition(ElevatorConstants.LV3);
           break;
         case L4:
+          setElasticVisual(4);
           setPosition(ElevatorConstants.LV4);
           break;
         case Intake:
+          setElasticVisual(-1);
           setPosition(ElevatorConstants.Intake);
           break;
         case Manual:
           break;
       }
     } else {
+      setElasticVisual(-1);
       setPosition(SmartDashboard.getNumber("Elevator Goal", 0.45));
     }
    

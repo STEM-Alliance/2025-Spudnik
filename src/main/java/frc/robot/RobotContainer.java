@@ -29,6 +29,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
+import frc.robot.subsystems.ElasticSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -58,7 +59,7 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
     private PhotonCamera m_photonCamera = new PhotonCamera("driveCamera");
-
+    private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
