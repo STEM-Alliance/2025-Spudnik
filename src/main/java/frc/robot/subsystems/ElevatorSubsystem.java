@@ -19,10 +19,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
 
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -102,6 +106,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    
 }
 
+    setElevatorHeights(ElevatorHeights.L0);
+
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -164,10 +172,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorLeader.getEncoder().setPosition(0);
 
   }
+
+  @Deprecated
   public void setPosition(double goalPosition){
     inTolerance = pidController.atSetpoint();
     pidController.setSetpoint(-goalPosition);
-    
+
     double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), goalPosition);
     double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
     double speed = pidOutput + feedforwardOutput;
@@ -183,6 +193,37 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
     // System.out.println(elevatorLeader.get());
   }
+
+  public void setPosition(ElevatorHeights elevatorHeight) {
+
+    inTolerance = pidController.atSetpoint();
+    pidController.setSetpoint(-elevatorHeight.height);
+
+    double pidOutput = pidController.calculate(elevatorLeader.getEncoder().getPosition(), elevatorHeight.height);
+    double feedforwardOutput = feedforward.calculate(elevatorLeader.getEncoder().getPosition(), elevatorLeader.getEncoder().getVelocity());
+    double speed = pidOutput + feedforwardOutput;
+    if (elevatorHeights == ElevatorHeights.L0) speed = -0.5;
+    if (speed > 1){
+      speed = 1;
+    }else if(speed < -1){
+        speed = -1;
+      }
+    if(elevatorLimitSwitch.get() && speed < 0){
+      speed = 0;
+      zeroElevator();
+      //TODO: This only happens at the start; make it check every so often
+      if (elevatorHeight == ElevatorHeights.L0) {
+        setElevatorHeights(ElevatorHeights.L1);
+        Notification notification = new Notification();
+        notification.setLevel(NotificationLevel.INFO);
+        notification.setTitle("Elevator");
+        notification.setDescription("Elevator Zeroed");
+        Elastic.sendNotification(notification);
+      }
+    }
+    elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
+  }
+
   public void StopElevator(){
     elevatorLeader.stopMotor();
   }

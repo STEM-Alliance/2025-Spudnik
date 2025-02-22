@@ -7,14 +7,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorHeights;
 import frc.robot.Constants.ElevatorConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PositionElevator extends Command {
   /** Creates a new PositionElevator. */
   private ElevatorSubsystem elevatorSubsystem;
-  private double elevatorHeight;
-  public PositionElevator(ElevatorSubsystem elevatorSubsystem, double elevatorHeight) {
+  private ElevatorHeights elevatorHeight;
+  public PositionElevator(ElevatorSubsystem elevatorSubsystem, ElevatorHeights elevatorHeight) {
+
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevatorSubsystem = elevatorSubsystem;
     this.elevatorHeight = elevatorHeight;
@@ -25,7 +27,7 @@ public class PositionElevator extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setPosition(elevatorHeight);
+    elevatorSubsystem.setElevatorHeights(elevatorHeight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -46,6 +48,7 @@ public class PositionElevator extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.getInTolerance();
+    return false;
+   // return elevatorSubsystem.getInTolerance();
   }
 }
