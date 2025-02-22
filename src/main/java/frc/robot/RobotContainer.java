@@ -46,8 +46,8 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
     private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
@@ -98,15 +98,17 @@ public class RobotContainer {
         operatorXbox.leftBumper()
                 .onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);}))
                 .onTrue(new SequentialCommandGroup(
-                            new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.3),
+                            new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.18),
                             // new InstantCommand(() -> {
+
                             //     operatorXbox.setRumble(RumbleType.kBothRumble, 1);
                             // }),
                             new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-                            new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem)
-                            // new InstantCommand(() -> {
-                            //     operatorXbox.setRumble(RumbleType.kBothRumble, 0);
-                            // })
+                            new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+                            new InstantCommand(() -> {
+                                elevatorSubsystem.setElevatorState(ElevatorState.Park);
+                                // operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+                            })
                         ));
 
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {

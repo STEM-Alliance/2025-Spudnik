@@ -145,12 +145,12 @@ public final class Constants {
         new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0));
 
     public static final double XY_SPEED_LIMIT = 1.0;
-    public static final double Z_SPEED_LIMIT = 1.0;
+    public static final double Z_SPEED_LIMIT = 1.0;  
   }
 
   public static final class CoralConstants {
-    public static final double ALIGN_DISTANCE = 5;
-    public static final double SENSOR_DISTANCE = 76; // in MM
+    public static final double ALIGN_DISTANCE = 13;
+    public static final double SENSOR_DISTANCE = 70; // in MM
   }
 
   public static final class ClimberConstants {
@@ -174,7 +174,7 @@ public final class Constants {
     public static final double LV2 = 39; //tween this value
     public static final double LV3 = 69; //tween this value
     public static final double LV4 = 117; //tween this value
-    public static final double Intake = 1;
+    public static final double Intake = 0;
     public static final int CORAL_LEADER_PORT = 14;
     public static final int CORAL_FOLLOWER_PORT = 15;
     public static final double CORAL_INTAKE_SPEED = 0.2;

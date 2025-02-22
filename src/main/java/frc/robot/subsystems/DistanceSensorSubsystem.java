@@ -3,6 +3,7 @@ import edu.wpi.first.hal.CANData;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CoralConstants;
 
   /**
    * This class reads the CAN bus and returns the detected distance of the sensor.
@@ -64,6 +65,11 @@ public class DistanceSensorSubsystem extends SubsystemBase {
      * This method is called periodically and reads data from the CAN bus.
      * It updates the SmartDashboard with the distance and status.
      */
+
+    public boolean hasCoral() {
+      return m_lastDistance < CoralConstants.SENSOR_DISTANCE;
+    }
+
     public void periodic() {
       if (m_can.readPacketTimeout(m_appID, m_timeout, m_data))
       {
@@ -75,7 +81,7 @@ public class DistanceSensorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("TOFStatus", m_lastStatus);
         SmartDashboard.putNumber("TOFAmbient", m_lastAmbient);
         SmartDashboard.putNumber("TOFSignal", m_lastSignal);
-        System.out.println("TOF: " + m_data.data[0] + "," + m_data.data[1] + "," + m_data.data[2] + ",");
+        // System.out.println("TOF: " + m_data.data[0] + "," + m_data.data[1] + "," + m_data.data[2] + ",");
 
       }
     }

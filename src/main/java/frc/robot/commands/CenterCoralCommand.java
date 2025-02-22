@@ -28,21 +28,14 @@ public class CenterCoralCommand extends Command {
   @Override
   public void initialize() {
     if (distanceSensorSubsystem.get_distance() < CoralConstants.SENSOR_DISTANCE) {
-      needsCentering = true;
-    } else {
-      needsCentering = false;
+      elevatorSubsystem.setIntake(-0.12);
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (needsCentering) {
-        elevatorSubsystem.setIntake(-0.2);
-        if (distanceSensorSubsystem.get_distance() > CoralConstants.SENSOR_DISTANCE) {
-          needsCentering = false;
-        }
-    }
+    System.out.println("Centering... D: " + Double.toString(distanceSensorSubsystem.get_distance()));
   }
 
   // Called once the command ends or is interrupted.
@@ -52,8 +45,8 @@ public class CenterCoralCommand extends Command {
   }
 
   // Returns true when the command should end.
-  @Override
+  @Override                               
   public boolean isFinished() {
-    return needsCentering;
+    return distanceSensorSubsystem.get_distance() > CoralConstants.SENSOR_DISTANCE;
   }
 }

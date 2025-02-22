@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Boolean inTolerance = false;
   private ElevatorFeedforward feedforward;
   private double tunekP = 0.1;
+  private DistanceSensorSubsystem distanceSensorSubsystem;
 
   public enum ElevatorState {
     Manual,
@@ -58,7 +60,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.elevatorState = ElevatorState.Park;
   }
 
-  public ElevatorSubsystem() {
+  public ElevatorSubsystem(DistanceSensorSubsystem distanceSensorSubsystem) {
+    this.distanceSensorSubsystem = distanceSensorSubsystem;
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
     elevatorFollower = new SparkMax(ElevatorConstants.ELEVATOR_FOLLOWER_PORT, MotorType.kBrushless);
     SparkMaxConfig elevatorLeaderConfig = new SparkMaxConfig();
@@ -87,7 +90,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SparkMaxConfig coralFollowerConfig = new SparkMaxConfig();
     coralFollowerConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     coralFollowerConfig.inverted(false);
-    coralFollowerConfig.follow(coralLeader, true);
+    coralFollowerConfig.follow(coralLeader, false);
     //TODO: DO NOT PUT BACK IN UNTIL FIXED
     coralFollower.configure(coralFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -95,6 +98,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setTolerance(ElevatorConstants.PID_TOLERANCE);
     feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
     SmartDashboard.putNumber("TuneKp", tunekP);
+    SmartDashboard.putNumber("Elevator Goal", 0.45);
+   
 }
 
   @Override
@@ -102,29 +107,35 @@ public class ElevatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     pidController.setP(SmartDashboard.getNumber("TuneKp", 0));
     SmartDashboard.putNumber("Elevator Position", elevatorLeader.getEncoder().getPosition());
+
     SmartDashboard.putString("Elevator State", elevatorState.name());
-    switch (elevatorState) {
-      case Park:
-        setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
-        break;
-      case L1:
-        setPosition(ElevatorConstants.LV1);
-        break;
-      case L2:
-        setPosition(ElevatorConstants.LV2);
-        break;
-      case L3:
-        setPosition(ElevatorConstants.LV3);
-        break;
-      case L4:
-        setPosition(ElevatorConstants.LV4);
-        break;
-      case Intake:
-        setPosition(ElevatorConstants.Intake);
-        break;
-      case Manual:
-        break;
+    if (distanceSensorSubsystem.hasCoral()) {
+      switch (elevatorState) {
+        case Park:
+          setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
+          break;
+        case L1:
+          setPosition(ElevatorConstants.LV1);
+          break;
+        case L2:
+          setPosition(ElevatorConstants.LV2);
+          break;
+        case L3:
+          setPosition(ElevatorConstants.LV3);
+          break;
+        case L4:
+          setPosition(ElevatorConstants.LV4);
+          break;
+        case Intake:
+          setPosition(ElevatorConstants.Intake);
+          break;
+        case Manual:
+          break;
+      }
+    } else {
+      setPosition(SmartDashboard.getNumber("Elevator Goal", 0.45));
     }
+   
   }
 
   public ElevatorState getElevatorState() {
@@ -170,7 +181,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       zeroElevator();
     }
     elevatorLeader.set(speed*ElevatorConstants.ELEVATOR_SPEED_MODIFIER);
-    System.out.println(elevatorLeader.get());
+    // System.out.println(elevatorLeader.get());
   }
   public void StopElevator(){
     elevatorLeader.stopMotor();

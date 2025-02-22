@@ -34,12 +34,16 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("D: " + Double.toString(distanceSensorSubsystem.get_distance()));
+
     elevatorSubsystem.setIntake(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevatorSubsystem.setIntake(0);
+  }
 
   // Returns true when the command should end.
   @Override
