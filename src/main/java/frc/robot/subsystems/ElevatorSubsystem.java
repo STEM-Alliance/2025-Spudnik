@@ -38,6 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final DigitalInput intakeLimitSwitch;
   private final PIDController pidController;
   private Boolean inTolerance = false;
+  private boolean wasInView = false;
   private ElevatorFeedforward feedforward;
   private double tunekP = 0.1;
   private DistanceSensorSubsystem distanceSensorSubsystem;
@@ -122,8 +123,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     pidController.setP(SmartDashboard.getNumber("TuneKp", 0));
     SmartDashboard.putNumber("Elevator Position", elevatorLeader.getEncoder().getPosition());
-
     SmartDashboard.putString("Elevator State", elevatorState.name());
+
+    if (distanceSensorSubsystem.hasCoral() != wasInView) {
+      Notification notification = new Notification();
+      notification.setTitle("Coral");
+      notification.setLevel(NotificationLevel.INFO);
+      notification.setDescription(distanceSensorSubsystem.hasCoral() ? "Coral Found" : "Coral Lost");
+      Elastic.sendNotification(notification);
+      wasInView = distanceSensorSubsystem.hasCoral();
+    }
+
     if (distanceSensorSubsystem.hasCoral()) {
       switch (elevatorState) {
         case Park:
@@ -177,8 +187,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (Speed > 1){
       Speed = 1;
     }else if(Speed < -1){
-        Speed = -1;
-      }
+      Speed = -1;
+    }
+
     elevatorLeader.set(Speed);
 
   }

@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -125,15 +126,22 @@ public class RobotContainer {
                 .onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);}))
                 .onTrue(new SequentialCommandGroup(
                             new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.18),
-                            // new InstantCommand(() -> {
-
-                            //     operatorXbox.setRumble(RumbleType.kBothRumble, 1);
-                            // }),
+                            new InstantCommand(() -> {
+                                Notification notification = new Notification();
+                                notification.setTitle("Intake Command Dispatched");
+                                notification.setLevel(NotificationLevel.INFO);
+                                Elastic.sendNotification(notification);
+                                operatorXbox.setRumble(RumbleType.kBothRumble, 1);
+                            }),
                             new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
                             new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
                             new InstantCommand(() -> {
+                                Notification notification = new Notification();
+                                notification.setTitle("Intake Command Finished");
+                                notification.setLevel(NotificationLevel.INFO);
+                                Elastic.sendNotification(notification);
                                 elevatorSubsystem.setElevatorState(ElevatorState.Park);
-                                // operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+                                operatorXbox.setRumble(RumbleType.kBothRumble, 0);
                             })
                         ));
 
@@ -151,14 +159,6 @@ public class RobotContainer {
 			}
             
         }).onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
-        }));
-
-        operatorXbox.povUp().onTrue(new InstantCommand(() -> {
-            climberSubsystem.up();
-        }));
-
-        operatorXbox.povDown().onTrue(new InstantCommand(() -> {
-            climberSubsystem.down();
         }));
 
 
