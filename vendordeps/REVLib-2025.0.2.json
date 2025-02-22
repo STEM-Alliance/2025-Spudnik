@@ -1,9 +1,5 @@
 {
-<<<<<<<< HEAD:vendordeps/REVLib.json
-    "fileName": "REVLib.json",
-========
     "fileName": "REVLib-2025.0.2.json",
->>>>>>>> pathplanned:vendordeps/REVLib-2025.0.2.json
     "name": "REVLib",
     "version": "2025.0.2",
     "frcYear": "2025",

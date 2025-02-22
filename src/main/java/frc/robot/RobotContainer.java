@@ -4,38 +4,38 @@
 
 package frc.robot;
 
-import frc.robot.Constants.*;
-import frc.robot.commands.*;
+import java.util.function.BooleanSupplier;
+
+import org.photonvision.PhotonCamera;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import frc.robot.subsystems.*;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.commands.AlignCoralCommand;
+import frc.robot.commands.CenterCoralCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DistanceSensorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
-import frc.robot.utils.ElasticSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.Notification.NotificationLevel;
-
-import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.Rotations;
-
-import java.lang.management.OperatingSystemMXBean;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
-import org.photonvision.PhotonCamera;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.wpilibj2.command.button.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -62,17 +62,12 @@ public class RobotContainer {
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
-    private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     //need can id of sensor to declare next line
     //private final TofDistanceSubsystem tofDistanceSubsystem = new TofDistanceSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
-
-    private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
-
-    private final ElevatorHeights cameraHeight = ElevatorHeights.L1;
 
     private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
     private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(), m_photonCamera);
@@ -85,13 +80,13 @@ public class RobotContainer {
         // Configure the trigger bindings
 
         // TODO: Change Speed To Correct Value
-        NamedCommands.registerCommand("PlaceCoral", new InstantCommand(() -> elevatorSubsystem.placeCoral(0.5)));
+        NamedCommands.registerCommand("PlaceCoral", new InstantCommand(() -> elevatorSubsystem.setIntake(0.5)));
 
-        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L0)));
-        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L1)));
-        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L2)));
-        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L3)));
-        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setPosition(ElevatorHeights.L4)));
+        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
+        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L1)));
+        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L2)));
+        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L3)));
+        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
         
         configureBindings();
 
@@ -124,11 +119,6 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
      */
-
-    private void resetHeight() {
-        elevatorSubsystem.setElevatorHeights(cameraHeight);
-    }
-
     private void configureBindings() {
         operatorXbox.leftBumper()
                 .onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);}))
