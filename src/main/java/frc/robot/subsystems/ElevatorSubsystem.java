@@ -13,6 +13,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -50,7 +52,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     L3, 
     L4,
     Park,
-    Intake
+    Intake, 
+    Reset
 
   }
 
@@ -70,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetElevatorState() {
-    setElevatorState(elevatorState.Park);
+    setElevatorState(ElevatorState.Park);
   }
 
   public ElevatorSubsystem(DistanceSensorSubsystem distanceSensorSubsystem) {
@@ -125,6 +128,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Position", elevatorLeader.getEncoder().getPosition());
     SmartDashboard.putString("Elevator State", elevatorState.name());
 
+    SmartDashboard.putBoolean("Coral FWD", getCoralBeamBreakFWD());
+    SmartDashboard.putBoolean("Coral REV", getCoralBeamBreakREV());
+
     if (distanceSensorSubsystem.hasCoral() != wasInView) {
       Notification notification = new Notification();
       notification.setTitle("Coral");
@@ -134,7 +140,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       wasInView = distanceSensorSubsystem.hasCoral();
     }
 
-    if (distanceSensorSubsystem.hasCoral()) {
       switch (elevatorState) {
         case Park:
           setElasticVisual(0);
@@ -162,11 +167,14 @@ public class ElevatorSubsystem extends SubsystemBase {
           break;
         case Manual:
           break;
+        case Reset:
+          elevatorMove(-0.05);
+          if(elevatorLimitSwitch.get()) {
+            zeroElevator();
+            setPosition(ElevatorConstants.Intake);
+          }
+          break;
       }
-    } else {
-      setElasticVisual(-1);
-      setPosition(SmartDashboard.getNumber("Elevator Goal", 0.45));
-    }
    
   }
 
@@ -186,7 +194,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     if (Speed > 1){
       Speed = 1;
-    }else if(Speed < -1){
+    }else if(Speed < -1) {
       Speed = -1;
     }
 
@@ -257,5 +265,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public SparkMax getCoralFollower() {
     return coralFollower;
+  }
+
+  public boolean getCoralBeamBreakFWD() {
+    return coralLeader.getForwardLimitSwitch().isPressed();
+  }
+
+  public boolean getCoralBeamBreakREV() {
+    return coralLeader.getReverseLimitSwitch().isPressed();
+  }
+
+  public void setCoralLimitEnabled(boolean enabled) {
+    SparkMaxConfig config = new SparkMaxConfig();
+
+    LimitSwitchConfig limitConfig = new LimitSwitchConfig();
+    limitConfig.forwardLimitSwitchEnabled(enabled);
+    limitConfig.reverseLimitSwitchEnabled(enabled);
+
+    config.limitSwitch.apply(limitConfig);
   }
 }

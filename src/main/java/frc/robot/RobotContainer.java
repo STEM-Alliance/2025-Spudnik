@@ -27,6 +27,8 @@ import frc.robot.commands.AlignCoralCommand;
 import frc.robot.commands.CenterCoralCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.PassThroughCommand;
+import frc.robot.commands.ReverseCoralCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
@@ -50,7 +52,6 @@ import frc.robot.util.Elastic.Notification.NotificationLevel;
  */
 public class RobotContainer {
 
-
     private final CommandXboxController driverXbox = new CommandXboxController(
             ControllerConstants.DRIVER_CONTROLLER_PORT);
     private final CommandXboxController operatorXbox = new CommandXboxController(
@@ -62,17 +63,19 @@ public class RobotContainer {
     private PhotonCamera m_photonCamera = new PhotonCamera("driveCamera");
     private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
-    private final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
+    private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
+    private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    //need can id of sensor to declare next line
-    //private final TofDistanceSubsystem tofDistanceSubsystem = new TofDistanceSubsystem();
+    // need can id of sensor to declare next line
+    // private final TofDistanceSubsystem tofDistanceSubsystem = new
+    // TofDistanceSubsystem();
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
     private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
-    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(), m_photonCamera);
+    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(),
+            m_photonCamera);
 
     /*
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -84,12 +87,17 @@ public class RobotContainer {
         // TODO: Change Speed To Correct Value
         NamedCommands.registerCommand("PlaceCoral", new InstantCommand(() -> elevatorSubsystem.setIntake(0.5)));
 
-        NamedCommands.registerCommand("L0", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
-        NamedCommands.registerCommand("L1", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L1)));
-        NamedCommands.registerCommand("L2", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L2)));
-        NamedCommands.registerCommand("L3", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L3)));
-        NamedCommands.registerCommand("L4", new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
-        
+        NamedCommands.registerCommand("L0",
+                new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
+        NamedCommands.registerCommand("L1",
+                new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L1)));
+        NamedCommands.registerCommand("L2",
+                new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L2)));
+        NamedCommands.registerCommand("L3",
+                new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L3)));
+        NamedCommands.registerCommand("L4",
+                new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
+
         configureBindings();
 
         DataLogManager.logNetworkTables(true);
@@ -122,93 +130,149 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        operatorXbox.leftBumper()
-                .onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);}))
-                .onTrue(new SequentialCommandGroup(
-                            new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.18),
-                            new InstantCommand(() -> {
-                                Notification notification = new Notification();
-                                notification.setTitle("Intake Command Dispatched");
-                                notification.setLevel(NotificationLevel.INFO);
-                                Elastic.sendNotification(notification);
-                                operatorXbox.setRumble(RumbleType.kBothRumble, 1);
-                            }),
-                            new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-                            new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-                            new InstantCommand(() -> {
-                                Notification notification = new Notification();
-                                notification.setTitle("Intake Command Finished");
-                                notification.setLevel(NotificationLevel.INFO);
-                                Elastic.sendNotification(notification);
-                                elevatorSubsystem.setElevatorState(ElevatorState.Park);
-                                operatorXbox.setRumble(RumbleType.kBothRumble, 0);
-                            })
-                        ));
+
+        // ? Old intaking command
+        // operatorXbox.leftBumper()
+        // .onTrue(new InstantCommand(() -> {
+        // elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+        // }))
+        // .onTrue(new SequentialCommandGroup(
+        // new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.18),
+        // new InstantCommand(() -> {
+        // Notification notification = new Notification();
+        // notification.setTitle("Intake Command Dispatched");
+        // notification.setLevel(NotificationLevel.INFO);
+        // Elastic.sendNotification(notification);
+        // operatorXbox.setRumble(RumbleType.kBothRumble, 1);
+        // }),
+        // new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+        // new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
+        // new InstantCommand(() -> {
+        // Notification notification = new Notification();
+        // notification.setTitle("Intake Command Finished");
+        // notification.setLevel(NotificationLevel.INFO);
+        // Elastic.sendNotification(notification);
+        // elevatorSubsystem.setElevatorState(ElevatorState.Park);
+        // operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+        // })));
+
+        operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+        })).onTrue(new SequentialCommandGroup(new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.25),
+                new InstantCommand(() -> {
+                    Notification notification = new Notification();
+                    notification.setTitle("Intake Command Dispatched");
+                    notification.setLevel(NotificationLevel.INFO);
+                    Elastic.sendNotification(notification);
+                    operatorXbox.setRumble(RumbleType.kBothRumble, 1);
+                }),
+                new PassThroughCommand(elevatorSubsystem),
+                new ReverseCoralCommand(elevatorSubsystem),
+                new InstantCommand(() -> {
+                    Notification notification = new Notification();
+                    notification.setTitle("Intake Command Finished");
+                    notification.setLevel(NotificationLevel.INFO);
+                    Elastic.sendNotification(notification);
+                    elevatorSubsystem.setElevatorState(ElevatorState.Park);
+                    operatorXbox.setRumble(RumbleType.kBothRumble, 0);
+                })));
 
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
-            elevatorSubsystem.setIntake(0.3);
+            elevatorSubsystem.setIntake(1);
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0);
         }));
-        
+
         operatorXbox.leftTrigger().and(new BooleanSupplier() {
 
-			@Override
-			public boolean getAsBoolean() {
-				return operatorXbox.getLeftTriggerAxis() > 0.2;
-			}
-            
-        }).onTrue(new InstantCommand(() -> {algaeSubsystem.placeAlgae();
+            @Override
+            public boolean getAsBoolean() {
+                return operatorXbox.getLeftTriggerAxis() > 0.2;
+            }
+
+        }).onTrue(new InstantCommand(() -> {
+            algaeSubsystem.placeAlgae();
         }));
 
+        // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem,
+        // ElevatorConstants.LV1));
+        // operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem,
+        // ElevatorConstants.LV2));
+        // operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem,
+        // ElevatorConstants.LV3));
+        // operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem,
+        // ElevatorConstants.LV4));
 
-        // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV1));
-        // operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV2));
-        // operatorXbox.x().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV3));
-        // operatorXbox.y().whileTrue(new PositionElevator(elevatorSubsystem, ElevatorConstants.LV4));
-        
+        operatorXbox.a().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.L1);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.resetElevatorState();
+        }));
+        operatorXbox.b().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.L2);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.resetElevatorState();
+        }));
+        operatorXbox.x().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.L3);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.resetElevatorState();
+        }));
+        operatorXbox.y().onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.L4);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.resetElevatorState();
+        }));
+        operatorXbox.button(7).onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.resetElevatorState();
+        }));
 
-        operatorXbox.a().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L1);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
-        operatorXbox.b().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L2);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
-        operatorXbox.x().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L3);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
-        operatorXbox.y().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L4);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
-        operatorXbox.button(7).onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.Intake);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        operatorXbox.button(8).onTrue(new InstantCommand(() -> {
+            elevatorSubsystem.setElevatorState(ElevatorState.Reset);
+        }));
 
-        //operatorXbox.button(8).onFalse(new PositionElevator(elevatorSubsystem, ElevatorConstants.ELEVATOR_PARK_HEIGHT));
+        // operatorXbox.button(8).onFalse(new PositionElevator(elevatorSubsystem,
+        // ElevatorConstants.ELEVATOR_PARK_HEIGHT));
 
-        //elevatorSubsystem.setDefaultCommand(new ManualElevator(() -> operatorXbox.getLeftY(), elevatorSubsystem));
-        //operatorXbox.leftStick().onTrue(new InstantCommand(() -> {elevatorSubsystem.setElevatorState(ElevatorState.L4);})).onFalse(new InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
+        // elevatorSubsystem.setDefaultCommand(new ManualElevator(() ->
+        // operatorXbox.getLeftY(), elevatorSubsystem));
+        // operatorXbox.leftStick().onTrue(new InstantCommand(() ->
+        // {elevatorSubsystem.setElevatorState(ElevatorState.L4);})).onFalse(new
+        // InstantCommand(() -> {elevatorSubsystem.resetElevatorState();}));
 
-    //    driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem, m_photonCamera));
-       driverXbox.y().onTrue(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Aimbot);
-       })).onFalse(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
-       }));
-       driverXbox.b().onTrue(new InstantCommand(() -> {
-        Notification notification = new Notification();
-        notification.setLevel(NotificationLevel.INFO);
-        notification.setTitle("State");
-        notification.setDescription("Changed to \"Homing\"");
-        Elastic.sendNotification(notification);
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
-       })).onFalse(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
-       }));
+        // driverXbox.y().whileTrue(new AimbotCommand(swerveDriveSubsystem,
+        // m_photonCamera));
+        driverXbox.y().onTrue(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Aimbot);
+        })).onFalse(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+        }));
+        driverXbox.b().onTrue(new InstantCommand(() -> {
+            Notification notification = new Notification();
+            notification.setLevel(NotificationLevel.INFO);
+            notification.setTitle("State");
+            notification.setDescription("Changed to \"Homing\"");
+            Elastic.sendNotification(notification);
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Home);
+        })).onFalse(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+        }));
 
-       driverXbox.leftBumper().onTrue(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.AimLeft);
-       })).onFalse(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
-       }));
+        driverXbox.leftBumper().onTrue(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.AimLeft);
+        })).onFalse(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+        }));
 
-       driverXbox.rightBumper().onTrue(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.AimRight);
-       })).onFalse(new InstantCommand(() -> {
-        swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
-       }));
+        driverXbox.rightBumper().onTrue(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.AimRight);
+        })).onFalse(new InstantCommand(() -> {
+            swerveDriveSubsystem.setRotationStyle(RotationStyle.Driver);
+        }));
     }
-   
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -228,5 +292,9 @@ public class RobotContainer {
 
     public CommandXboxController getOperatorXbox() {
         return operatorXbox; // operats x box
+    }
+
+    public ElevatorSubsystem getElevatorSubsystem() {
+        return elevatorSubsystem;
     }
 }

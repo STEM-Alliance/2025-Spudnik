@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 
 /**
@@ -112,8 +113,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robotContainer.getElevatorSubsystem().setElevatorState(ElevatorState.Reset);
     m_robotContainer.getSwerveSubsystem().setRotationStyle(RotationStyle.Driver);
-    m_robotContainer.getSwerveSubsystem().zeroHeading();
     // m_robotContainer.resetShootake();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

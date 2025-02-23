@@ -28,14 +28,13 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    elevatorSubsystem.setCoralLimitEnabled(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("D: " + Double.toString(distanceSensorSubsystem.get_distance()));
-
+    // System.out.println("D: " + Double.toString(distanceSensorSubsystem.get_distance()));
     elevatorSubsystem.setIntake(speed);
   }
 
@@ -48,6 +47,7 @@ public class IntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return distanceSensorSubsystem.get_distance() < CoralConstants.SENSOR_DISTANCE;
+    return elevatorSubsystem.getCoralBeamBreakREV();
+    // return distanceSensorSubsystem.get_distance() < CoralConstants.SENSOR_DISTANCE;
   }
 }
