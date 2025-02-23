@@ -174,7 +174,7 @@ public class SwerveModule {
     }
 
     public void setModuleState(SwerveModuleState state) {
-        if (Math.abs(state.speedMetersPerSecond) < 0.005) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.1) {
             stop();
             return;
         }
