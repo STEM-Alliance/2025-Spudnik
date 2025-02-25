@@ -38,6 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkMax coralFollower;
   private final DigitalInput elevatorLimitSwitch;
   private final DigitalInput intakeLimitSwitch;
+  private final DigitalInput beamBreaker;
   private final PIDController pidController;
   private Boolean inTolerance = false;
   private boolean wasInView = false;
@@ -96,6 +97,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     elevatorLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LIMIT_SWITCH);
     intakeLimitSwitch = new DigitalInput(ElevatorConstants.INTAKE_LIMIT_SWITCH);
+    beamBreaker = new DigitalInput(1);
 
     coralLeader = new SparkMax(ElevatorConstants.CORAL_LEADER_PORT, MotorType.kBrushless);
     
@@ -118,6 +120,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
     SmartDashboard.putNumber("TuneKp", tunekP);
     SmartDashboard.putNumber("Elevator Goal", 0.45);
+
+    setCoralLimitEnabled(true);
   
   }
 
@@ -130,6 +134,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Coral FWD", getCoralBeamBreakFWD());
     SmartDashboard.putBoolean("Coral REV", getCoralBeamBreakREV());
+    SmartDashboard.putBoolean("BB Input",  getBeamBreakDI());
 
     if (distanceSensorSubsystem.hasCoral() != wasInView) {
       Notification notification = new Notification();
@@ -201,9 +206,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorLeader.set(Speed);
 
   }
+
   public void zeroElevator(){
     elevatorLeader.getEncoder().setPosition(0);
-
   }
 
   public void setPosition(double goalPosition){
@@ -265,6 +270,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public SparkMax getCoralFollower() {
     return coralFollower;
+  }
+
+  public boolean getBeamBreakDI() {
+    return beamBreaker.get();
   }
 
   public boolean getCoralBeamBreakFWD() {

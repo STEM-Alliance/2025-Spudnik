@@ -178,7 +178,7 @@ public final class Constants {
     public static final double LV2 = 39; //tween this value
     public static final double LV3 = 69; //tween this value
     public static final double LV4 = 117; //tween this value
-    public static final double Intake = 0;
+    public static final double Intake = 7.0;
     public static final int CORAL_LEADER_PORT = 14;
     public static final int CORAL_FOLLOWER_PORT = 15;
     public static final double CORAL_INTAKE_SPEED = 0.2;
@@ -208,7 +208,7 @@ public final class Constants {
     public static final double ALGAE_HOLD_SPEED = 0.2; //20 percent
     public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
     public static final double ALGAE_PLACE_SPEED = -0.2;
-    public static final int ALGAE_LIMIT_SWITCH = 1;
+    public static final int ALGAE_LIMIT_SWITCH = 3;
   }
 
   public static final class PathPlannerConstants {

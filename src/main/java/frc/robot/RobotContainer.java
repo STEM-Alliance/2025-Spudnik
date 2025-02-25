@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.AlignCoralCommand;
 import frc.robot.commands.CenterCoralCommand;
+import frc.robot.commands.CoralAlignForwardsCommand;
+import frc.robot.commands.CoralAlignPassthroughCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.PassThroughCommand;
@@ -131,52 +133,16 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
-        // ? Old intaking command
-        // operatorXbox.leftBumper()
-        // .onTrue(new InstantCommand(() -> {
-        // elevatorSubsystem.setElevatorState(ElevatorState.Intake);
-        // }))
-        // .onTrue(new SequentialCommandGroup(
-        // new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.18),
-        // new InstantCommand(() -> {
-        // Notification notification = new Notification();
-        // notification.setTitle("Intake Command Dispatched");
-        // notification.setLevel(NotificationLevel.INFO);
-        // Elastic.sendNotification(notification);
-        // operatorXbox.setRumble(RumbleType.kBothRumble, 1);
-        // }),
-        // new CenterCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-        // new AlignCoralCommand(distanceSensorSubsystem, elevatorSubsystem),
-        // new InstantCommand(() -> {
-        // Notification notification = new Notification();
-        // notification.setTitle("Intake Command Finished");
-        // notification.setLevel(NotificationLevel.INFO);
-        // Elastic.sendNotification(notification);
-        // elevatorSubsystem.setElevatorState(ElevatorState.Park);
-        // operatorXbox.setRumble(RumbleType.kBothRumble, 0);
-        // })));
+        
 
         operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.Intake);
-        })).onTrue(new SequentialCommandGroup(new IntakeCommand(distanceSensorSubsystem, elevatorSubsystem, 0.25),
-                new InstantCommand(() -> {
-                    Notification notification = new Notification();
-                    notification.setTitle("Intake Command Dispatched");
-                    notification.setLevel(NotificationLevel.INFO);
-                    Elastic.sendNotification(notification);
-                    operatorXbox.setRumble(RumbleType.kBothRumble, 1);
-                }),
-                new PassThroughCommand(elevatorSubsystem),
-                new ReverseCoralCommand(elevatorSubsystem),
-                new InstantCommand(() -> {
-                    Notification notification = new Notification();
-                    notification.setTitle("Intake Command Finished");
-                    notification.setLevel(NotificationLevel.INFO);
-                    Elastic.sendNotification(notification);
-                    elevatorSubsystem.setElevatorState(ElevatorState.Park);
-                    operatorXbox.setRumble(RumbleType.kBothRumble, 0);
-                })));
+        })).onTrue(new SequentialCommandGroup(
+            new CoralAlignForwardsCommand(elevatorSubsystem),
+            new CoralAlignPassthroughCommand(elevatorSubsystem)
+        ));
 
+        
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(1);
         })).onFalse(new InstantCommand(() -> {
