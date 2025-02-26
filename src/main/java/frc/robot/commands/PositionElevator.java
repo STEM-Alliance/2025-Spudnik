@@ -41,7 +41,6 @@ public class PositionElevator extends Command {
   public void end(boolean interrupted) {
     elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
     SmartDashboard.putNumber("Elevator Height (A)", elevatorSubsystem.getElevatorPosition());
-
   }
 
   // Returns true when the command should end.

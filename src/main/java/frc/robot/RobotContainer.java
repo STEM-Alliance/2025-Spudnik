@@ -14,6 +14,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +38,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
 import frc.robot.subsystems.ElasticSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
@@ -65,8 +68,9 @@ public class RobotContainer {
     private PhotonCamera m_photonCamera = new PhotonCamera("driveCamera");
     private final ElasticSubsystem elasticSubsystem = new ElasticSubsystem();
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
+    // private final LEDSubsystem m_LedSubsystem = new LEDSubsystem();
     private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
-    private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem);
+    private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     // need can id of sensor to declare next line
@@ -99,7 +103,9 @@ public class RobotContainer {
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L3)));
         NamedCommands.registerCommand("L4",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
-
+        // NamedCommands.registerCommand("LED Blue", 
+        //         new InstantCommand(() -> m_LedSubsystem.blue())
+        // );
         configureBindings();
 
         DataLogManager.logNetworkTables(true);
@@ -145,6 +151,11 @@ public class RobotContainer {
         
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(1);
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                Robot.m_ledSubsystem.m_leds.setSpeed(0.61);
+            } else {
+                Robot.m_ledSubsystem.m_leds.setSpeed(0.87);
+            }
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(0);
         }));

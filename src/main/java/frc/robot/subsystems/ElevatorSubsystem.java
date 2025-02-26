@@ -22,8 +22,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
@@ -45,7 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorFeedforward feedforward;
   private double tunekP = 0.1;
   private DistanceSensorSubsystem distanceSensorSubsystem;
-
+  private LEDSubsystem m_LedSubsystem;
   public enum ElevatorState {
     Manual,
     L1, 
@@ -77,10 +80,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     setElevatorState(ElevatorState.Park);
   }
 
-  public ElevatorSubsystem(DistanceSensorSubsystem distanceSensorSubsystem) {
+  public ElevatorSubsystem(DistanceSensorSubsystem distanceSensorSubsystem, LEDSubsystem ledSubsystem) {
     
     setElasticVisual(0);
-
+    m_LedSubsystem = ledSubsystem;
     this.distanceSensorSubsystem = distanceSensorSubsystem;
     elevatorLeader = new SparkMax(ElevatorConstants.ELEVATOR_LEADER_PORT, MotorType.kBrushless);
     elevatorFollower = new SparkMax(ElevatorConstants.ELEVATOR_FOLLOWER_PORT, MotorType.kBrushless);
@@ -136,13 +139,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Coral REV", getCoralBeamBreakREV());
     SmartDashboard.putBoolean("BB Input",  getBeamBreakDI());
 
-    if (distanceSensorSubsystem.hasCoral() != wasInView) {
+
+
+    if (getBeamBreakDI() != wasInView) {
       Notification notification = new Notification();
       notification.setTitle("Coral");
       notification.setLevel(NotificationLevel.INFO);
       notification.setDescription(distanceSensorSubsystem.hasCoral() ? "Coral Found" : "Coral Lost");
       Elastic.sendNotification(notification);
       wasInView = distanceSensorSubsystem.hasCoral();
+     
     }
 
       switch (elevatorState) {

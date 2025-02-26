@@ -32,7 +32,6 @@ public class ManualElevator extends Command {
   @Override
   public void execute() {
     if (Math.abs(speed.getAsDouble()) > 0.1) {
-
       elevatorSubsystem.setElevatorState(ElevatorState.Manual);
       elevatorSubsystem.elevatorMove(-speed.getAsDouble()*ElevatorConstants.ELEVATOR_SPEED_LIMIT);
     }
