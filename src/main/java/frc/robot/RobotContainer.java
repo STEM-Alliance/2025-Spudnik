@@ -138,9 +138,6 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-
-        
-
         operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.Intake);
         })).onTrue(new SequentialCommandGroup(
@@ -148,7 +145,6 @@ public class RobotContainer {
             new CoralAlignPassthroughCommand(elevatorSubsystem)
         ));
 
-        
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setIntake(1);
             if (DriverStation.getAlliance().get() == Alliance.Red) {
@@ -161,12 +157,10 @@ public class RobotContainer {
         }));
 
         operatorXbox.leftTrigger().and(new BooleanSupplier() {
-
             @Override
             public boolean getAsBoolean() {
                 return operatorXbox.getLeftTriggerAxis() > 0.2;
             }
-
         }).onTrue(new InstantCommand(() -> {
             algaeSubsystem.placeAlgae();
         }));
@@ -184,6 +178,16 @@ public class RobotContainer {
             elevatorSubsystem.setElevatorState(ElevatorState.L1);
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
+        }));
+        operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
+            algaeSubsystem.algaeIntake.set(-0.5);
+        }) ).onFalse(new InstantCommand(() -> {
+            algaeSubsystem.algaeIntake.set(0);
+        }));
+        operatorXbox.rightTrigger().onTrue(new InstantCommand(() -> {
+            algaeSubsystem.algaeIntake.set(0.5);
+        }) ).onFalse(new InstantCommand(() -> {
+            algaeSubsystem.algaeIntake.set(0);
         }));
         operatorXbox.b().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.L2);

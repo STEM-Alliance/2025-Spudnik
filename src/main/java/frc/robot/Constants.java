@@ -161,7 +161,7 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static PIDController pidController = new PIDController(0.1, 0, 0);
-    public static final int climbMotorPort = 16;
+    public static final int climbMotorPort = 21;
     public static final double motorTop = 20;
     public static final double motorBottom = 0;
   }
@@ -202,7 +202,7 @@ public final class Constants {
   }
 
   public static class AlgaeConstants{
-    public static final int ALGAE_INTAKE_PORT = 20;
+    public static final int ALGAE_INTAKE_PORT = 16;
     public static final int ALGAE_MANIP_PORT = 19;
     public static final double kS = 0;
     public static final double kG = 0;
