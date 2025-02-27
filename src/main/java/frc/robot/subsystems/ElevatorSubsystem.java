@@ -138,6 +138,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Coral FWD", getCoralBeamBreakFWD());
     SmartDashboard.putBoolean("Coral REV", getCoralBeamBreakREV());
     SmartDashboard.putBoolean("BB Input",  getBeamBreakDI());
+    SmartDashboard.putBoolean("Bottom Switch",  elevatorLimitSwitch.get());
 
 
 
@@ -150,6 +151,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       wasInView = distanceSensorSubsystem.hasCoral();
      
     }
+    // setPosition(SmartDashboard.getNumber("Elevator Goal", 0));
 
       switch (elevatorState) {
         case Park:

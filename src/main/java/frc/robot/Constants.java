@@ -177,8 +177,8 @@ public final class Constants {
     public static final double ELEVATOR_PARK_HEIGHT = 16;
     public static final double ELEVATOR_SPEED_MODIFIER = 0.5;
     public static final double LV1 = 12; //tween this value
-    public static final double LV2 = 39; //tween this value
-    public static final double LV3 = 69; //tween this value
+    public static final double LV2 = 32; //tween this value
+    public static final double LV3 = 64; //tween this value
     public static final double LV4 = 117; //tween this value
     public static final double Intake = 7.0;
     public static final int CORAL_LEADER_PORT = 14;
