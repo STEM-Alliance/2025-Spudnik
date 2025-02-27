@@ -4,49 +4,49 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CoralConstants;
+import frc.robot.subsystems.DistanceSensorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.Constants.ElevatorConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class PositionElevator extends Command {
-  /** Creates a new PositionElevator. */
+public class CenterCoralCommand extends Command {
+  private DistanceSensorSubsystem distanceSensorSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
-  private double elevatorHeight;
-  public PositionElevator(ElevatorSubsystem elevatorSubsystem, double elevatorHeight) {
+  private boolean needsCentering = true;
+  /** Creates a new CenterCoral. */
+  public CenterCoralCommand(DistanceSensorSubsystem distanceSensorSubsystem, ElevatorSubsystem elevtorSubsystem) {
+    this.distanceSensorSubsystem = distanceSensorSubsystem;
+    this.elevatorSubsystem = elevtorSubsystem;
+    SmartDashboard.putString("IntakeCommand", "Center");
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.elevatorSubsystem = elevatorSubsystem;
-    this.elevatorHeight = elevatorHeight;
-    SmartDashboard.putNumber("Elevator Height (A)", elevatorHeight);
-    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setPosition(elevatorHeight);
+    if (distanceSensorSubsystem.get_distance() < CoralConstants.SENSOR_DISTANCE) {
+      elevatorSubsystem.setIntake(-0.12);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Elevator Height (A)", elevatorHeight);
-    elevatorSubsystem.setPosition(elevatorHeight);
+    System.out.println("Centering... D: " + Double.toString(distanceSensorSubsystem.get_distance()));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevatorSubsystem.setPosition(ElevatorConstants.ELEVATOR_PARK_HEIGHT);
-    SmartDashboard.putNumber("Elevator Height (A)", elevatorSubsystem.getElevatorPosition());
+    elevatorSubsystem.setIntake(0);
   }
 
   // Returns true when the command should end.
-  @Override
+  @Override                               
   public boolean isFinished() {
-    return false;
-   // return elevatorSubsystem.getInTolerance();
+    return distanceSensorSubsystem.get_distance() > CoralConstants.SENSOR_DISTANCE;
   }
 }

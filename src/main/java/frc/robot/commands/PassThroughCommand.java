@@ -4,46 +4,37 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
-
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ManualElevator extends Command {
-  private ElevatorSubsystem elevatorSubsystem;
-  private DoubleSupplier speed;
-  /** Creates a new ManualElevator. */
-  public ManualElevator(DoubleSupplier speed, ElevatorSubsystem elevatorSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class PassThroughCommand extends Command {
+
+  private final ElevatorSubsystem elevatorSubsystem;
+  /** Creates a new PassThroughCommand. */
+  public PassThroughCommand(ElevatorSubsystem elevatorSubsystem) {
     this.elevatorSubsystem = elevatorSubsystem;
-    this.speed = speed;
-    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    elevatorSubsystem.setIntake(0.22);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (Math.abs(speed.getAsDouble()) > 0.1) {
-      elevatorSubsystem.setElevatorState(ElevatorState.Manual);
-      elevatorSubsystem.elevatorMove(-speed.getAsDouble()*ElevatorConstants.ELEVATOR_SPEED_LIMIT);
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevatorSubsystem.setIntake(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.getCoralBeamBreakREV() == false;
   }
 }

@@ -9,11 +9,14 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 
 /**
@@ -28,6 +31,8 @@ import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 public class Robot extends TimedRobot {
   
   private Command m_autonomousCommand;
+
+  public static LEDSubsystem m_ledSubsystem = new LEDSubsystem();
 
   private RobotContainer m_robotContainer;
 
@@ -93,6 +98,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_ledSubsystem.m_leds.setSpeed(-0.15);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -112,13 +118,23 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+   // otContainer.getElevatorSubsystem().setElevatorState(ElevatorState.Reset);
+   //m_ledSubsystem.blue();
+    // m_ledSubsystem.m_leds.setSpeed(0);
     m_robotContainer.getSwerveSubsystem().setRotationStyle(RotationStyle.Driver);
-    m_robotContainer.getSwerveSubsystem().zeroHeading();
     // m_robotContainer.resetShootake();
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      m_ledSubsystem.m_leds.setSpeed(0.61);
+    } else {
+      m_ledSubsystem.m_leds.setSpeed(0.87);
+
+    }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
   }
+
+  
 
   /** This function is called periodically during operator control. */
   @Override

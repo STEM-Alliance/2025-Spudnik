@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.List;
 
-import com.studica.frc.AHRS;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;

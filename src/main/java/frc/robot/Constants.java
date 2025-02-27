@@ -17,6 +17,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.LEDSubsystem;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -44,6 +45,7 @@ public final class Constants {
       public static final double TOTAL_MASS_KG = 10;
       public static final double MOMENT_OF_INERTIA = 1;
   }
+
 
   public static final class FieldConstants {
     public static final double GRAVITY = 9.81;
@@ -149,23 +151,44 @@ public final class Constants {
         new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0));
 
     public static final double XY_SPEED_LIMIT = 1.0;
-    public static final double Z_SPEED_LIMIT = 1.0;
+    public static final double Z_SPEED_LIMIT = 1.0;  
   }
+
+  public static final class CoralConstants {
+    public static final double ALIGN_DISTANCE = 13;
+    public static final double SENSOR_DISTANCE = 70; // in MM
+  }
+
+  public static final class ClimberConstants {
+    public static PIDController pidController = new PIDController(0.1, 0, 0);
+    public static final int climbMotorPort = 16;
+    public static final double motorTop = 20;
+    public static final double motorBottom = 0;
+  }
+
   public static final class ElevatorConstants {
     public static final int ELEVATOR_LEADER_PORT = 9;
     public static final int ELEVATOR_FOLLOWER_PORT = 10;
-    public static final int ELEVATOR_LIMIT_SWITCH = 11;
-    public static final double ELEVATOR_TOP_LIMIT = 100; //change to actual number
+    public static final int ELEVATOR_LIMIT_SWITCH = 0;
+    public static final int INTAKE_LIMIT_SWITCH = 16;
+    public static final double ELEVATOR_TOP_LIMIT = 120; //change to actual number
     public static final double ELEVATOR_BOTTOM_LIMIT = 0; //change to actual number
     public static final double ELEVATOR_SPEED_LIMIT = 0.25;
-    public static final double ELEVATOR_PARK_HEIGHT = 0.1;
-    public static final double ELEVATOR_SPEED_MODIFIER = 0.1;
-    public static final int CORAL_LEADER_PORT = 12;
-    public static final int CORAL_FOLLOWER_PORT = 13;
+    public static final double ELEVATOR_PARK_HEIGHT = 16;
+    public static final double ELEVATOR_SPEED_MODIFIER = 0.5;
+    public static final double LV1 = 12; //tween this value
+    public static final double LV2 = 39; //tween this value
+    public static final double LV3 = 69; //tween this value
+    public static final double LV4 = 117; //tween this value
+    public static final double Intake = 7.0;
+    public static final int CORAL_LEADER_PORT = 14;
+    public static final int CORAL_FOLLOWER_PORT = 15;
+    public static final double CORAL_INTAKE_SPEED = 0.2;
+    public static final double CORAL_PLACE_SPEED = -0.2;
   
-
+ 
     //pid valuse
-    public static final double kP = 0.00001; //need to toon
+    public static final double kP = 0.01; //need to toon
     public static final double kI = 0; //may not use
     public static final double kD = 0; //may not use
     public static final double PID_TOLERANCE = 0.1;
@@ -179,7 +202,15 @@ public final class Constants {
   }
 
   public static class AlgaeConstants{
-    public static final int ALGAE_INTAKE_PORT = 14;
+    public static final int ALGAE_INTAKE_PORT = 20;
+    public static final int ALGAE_MANIP_PORT = 19;
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
+    public static final double ALGAE_HOLD_SPEED = 0.2; //20 percent
+    public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
+    public static final double ALGAE_PLACE_SPEED = -0.2;
+    public static final int ALGAE_LIMIT_SWITCH = 3;
   }
 
   public static final class PathPlannerConstants {
