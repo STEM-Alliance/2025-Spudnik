@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -15,6 +17,8 @@ public class CoralAlignForwardsCommand extends Command {
   public CoralAlignForwardsCommand(ElevatorSubsystem elevatorSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevatorSubsystem = elevatorSubsystem;
+        SmartDashboard.putString("IntakeCommand", "Align");
+
   }
 
   // Called when the command is initially scheduled.
@@ -37,6 +41,6 @@ public class CoralAlignForwardsCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !elevatorSubsystem.getBeamBreakDI();
+    return !elevatorSubsystem.getBeamBreakDI() || RobotContainer.intakeInterup;
   }
 }

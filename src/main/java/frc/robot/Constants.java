@@ -161,7 +161,7 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static PIDController pidController = new PIDController(0.1, 0, 0);
-    public static final int climbMotorPort = 16;
+    public static final int climbMotorPort = 21;
     public static final double motorTop = 20;
     public static final double motorBottom = 0;
   }
@@ -177,9 +177,9 @@ public final class Constants {
     public static final double ELEVATOR_PARK_HEIGHT = 16;
     public static final double ELEVATOR_SPEED_MODIFIER = 0.5;
     public static final double LV1 = 12; //tween this value
-    public static final double LV2 = 39; //tween this value
-    public static final double LV3 = 69; //tween this value
-    public static final double LV4 = 117; //tween this value
+    public static final double LV2 = 31.5; //tween this value
+    public static final double LV3 = 64; //tween this value
+    public static final double LV4 = 119; //tween this value
     public static final double Intake = 7.0;
     public static final int CORAL_LEADER_PORT = 14;
     public static final int CORAL_FOLLOWER_PORT = 15;
@@ -202,7 +202,7 @@ public final class Constants {
   }
 
   public static class AlgaeConstants{
-    public static final int ALGAE_INTAKE_PORT = 20;
+    public static final int ALGAE_INTAKE_PORT = 16;
     public static final int ALGAE_MANIP_PORT = 19;
     public static final double kS = 0;
     public static final double kG = 0;
