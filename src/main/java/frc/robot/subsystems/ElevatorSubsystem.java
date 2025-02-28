@@ -125,7 +125,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Goal", 0.45);
 
     setCoralLimitEnabled(true);
-  
+    SmartDashboard.putBoolean("Elev. Limit",  false);
+
   }
 
   @Override
@@ -138,6 +139,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Coral FWD", getCoralBeamBreakFWD());
     SmartDashboard.putBoolean("Coral REV", getCoralBeamBreakREV());
     SmartDashboard.putBoolean("BB Input",  getBeamBreakDI());
+    SmartDashboard.putBoolean("Elev. Limit",  elevatorLimitSwitch.get());
 
 
 
@@ -150,6 +152,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       wasInView = distanceSensorSubsystem.hasCoral();
      
     }
+
+    // setPosition(SmartDashboard.getNumber("Elevator Goal", 0));
+
 
       switch (elevatorState) {
         case Park:
@@ -179,10 +184,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         case Manual:
           break;
         case Reset:
-          elevatorMove(-0.05);
+          elevatorMove(-0.1);
           if(elevatorLimitSwitch.get()) {
             zeroElevator();
-            setPosition(ElevatorConstants.Intake);
+            setElevatorState(ElevatorState.Intake);
           }
           break;
       }
@@ -194,13 +199,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void elevatorMove(double Speed) {
-    if ((elevatorLimitSwitch.get() && Speed < 0)
-     || (elevatorLeader.getEncoder().getPosition() > ElevatorConstants.ELEVATOR_TOP_LIMIT)
-     || (elevatorLeader.getEncoder().getPosition() < ElevatorConstants.ELEVATOR_BOTTOM_LIMIT)){
+    if (((elevatorLimitSwitch.get() && Speed < 0)
+    || (elevatorLeader.getEncoder().getPosition() > ElevatorConstants.ELEVATOR_TOP_LIMIT)
+    || (elevatorLeader.getEncoder().getPosition() < ElevatorConstants.ELEVATOR_BOTTOM_LIMIT))
+     && elevatorState != ElevatorState.Reset){
       Speed = 0; //stops robot from killing itself
     }
     if (elevatorLimitSwitch.get()){
       zeroElevator(); //resets elevator encoder pos to 0
+      Speed = 0;
     }
     
     if (Speed > 1){

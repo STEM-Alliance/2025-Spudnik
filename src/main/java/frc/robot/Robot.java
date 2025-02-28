@@ -50,13 +50,15 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    // Shuffleboard.getTab("SmartDashboard").add(autoChooser);
+    // ffleboard.getTab("SmartDashboard").add(autoChooser);
 
             DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
 
     m_robotContainer = new RobotContainer();
     m_robotContainer.getSwerveSubsystem().stopDrive();
+    m_robotContainer.getSwerveSubsystem().zeroHeading();
+
   }
 
   /**

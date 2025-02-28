@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
@@ -73,6 +74,7 @@ public class RobotContainer {
     private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public static boolean intakeInterup = false;
     // need can id of sensor to declare next line
     // private final TofDistanceSubsystem tofDistanceSubsystem = new
     // TofDistanceSubsystem();
@@ -91,7 +93,12 @@ public class RobotContainer {
         // Configure the trigger bindings
 
         // TODO: Change Speed To Correct Value
-        NamedCommands.registerCommand("PlaceCoral", new InstantCommand(() -> elevatorSubsystem.setIntake(0.5)));
+        NamedCommands.registerCommand("PlaceCoral", 
+        new InstantCommand(() -> elevatorSubsystem.setIntake(1))
+        .andThen(new WaitCommand(1))
+        .andThen(new InstantCommand(() -> {
+            elevatorSubsystem.setIntake(0);
+        })));
 
         NamedCommands.registerCommand("L0",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
@@ -103,6 +110,12 @@ public class RobotContainer {
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L3)));
         NamedCommands.registerCommand("L4",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
+        NamedCommands.registerCommand("Intake",
+            new InstantCommand(() -> {
+                elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+                new CoralAlignForwardsCommand(elevatorSubsystem);
+                new CoralAlignPassthroughCommand(elevatorSubsystem);
+            }));
         // NamedCommands.registerCommand("LED Blue", 
         //         new InstantCommand(() -> m_LedSubsystem.blue())
         // );
@@ -137,8 +150,10 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
      */
+
     private void configureBindings() {
         operatorXbox.leftBumper().onTrue(new InstantCommand(() -> {
+            intakeInterup = false;
             elevatorSubsystem.setElevatorState(ElevatorState.Intake);
         })).onTrue(new SequentialCommandGroup(
             new CoralAlignForwardsCommand(elevatorSubsystem),
@@ -146,6 +161,7 @@ public class RobotContainer {
         ));
 
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
+            intakeInterup = true;
             elevatorSubsystem.setIntake(1);
             if (DriverStation.getAlliance().get() == Alliance.Red) {
                 Robot.m_ledSubsystem.m_leds.setSpeed(0.61);
