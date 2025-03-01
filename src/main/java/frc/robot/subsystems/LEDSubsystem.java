@@ -1,15 +1,19 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PWM;
 
 public class LEDSubsystem extends SubsystemBase {
 
     public PWM m_leds = new PWM(0);
-
+    boolean redTeam;
     /** Creates a new DriveSubsystem. */
     public LEDSubsystem() 
     {
+      
     }
 
     @Override
@@ -17,24 +21,41 @@ public class LEDSubsystem extends SubsystemBase {
     public void periodic() {
 
     }
-
-    public Command red()
+    public void teamColor()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(0.61));
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+            Robot.m_ledSubsystem.m_leds.setSpeed(0.61); // Red
+        } else {
+            Robot.m_ledSubsystem.m_leds.setSpeed(0.87); // Blue
+        }
+    }
+    public void red()
+    {
+       m_leds.setSpeed(0.61);
+
+    }
+    
+    public void blue()
+    {
+       m_leds.setSpeed(0.87);
     }
 
-    public Command yellow()
+    
+   public void AutoBlue()
+   {
+    // Breathing blue
+    m_leds.setSpeed(-0.15);
+   }
+
+    public void purple()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(0.69));
+       m_leds.setSpeed(0.91);
     }
 
-    public Command blue()
-    {
-        return new InstantCommand(() -> m_leds.setSpeed(-0.15));
-    }
 
-    public Command crazy()
+    public void strobe()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(-0.59));
+       //White strobe
+        m_leds.setSpeed(-0.05);
     }
 }
