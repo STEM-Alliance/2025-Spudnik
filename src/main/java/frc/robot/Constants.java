@@ -124,8 +124,8 @@ public final class Constants {
     // TODO: Make sure that this is correct - this is from the SDS website but needs
     // empirical verification
     public static final double MAX_MODULE_VELOCITY = 5.21;
-    public static final double MAX_ROBOT_VELOCITY = 5.21;
-    public static final double MAX_ROBOT_RAD_VELOCITY = 12.0; // Approx. Measured rads/sec
+    public static final double MAX_ROBOT_VELOCITY = 5.21; //2.5
+    public static final double MAX_ROBOT_RAD_VELOCITY = 12.0; // Approx. Measured rads/sec 
 
     // TODO: ############## REPLACE PLACEHOLDERS ##############
     public static final double MAX_MODULE_CURRENT = 40;
@@ -180,7 +180,7 @@ public final class Constants {
     public static final double LV2 = 31.5; //tween this value
     public static final double LV3 = 64; //tween this value
     public static final double LV4 = 119; //tween this value
-    public static final double Intake = 7.0;
+    public static final double Intake = 7.5;
     public static final int CORAL_LEADER_PORT = 14;
     public static final int CORAL_FOLLOWER_PORT = 15;
     public static final double CORAL_INTAKE_SPEED = 0.2;

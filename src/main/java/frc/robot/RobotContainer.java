@@ -172,6 +172,19 @@ public class RobotContainer {
             elevatorSubsystem.setIntake(0);
         }));
 
+        operatorXbox.button(7).onTrue(new InstantCommand(() -> {
+            intakeInterup = true;
+            elevatorSubsystem.setIntake(-0.2);
+            Robot.m_ledSubsystem.m_leds.setSpeed(-0.05);
+        })).onFalse(new InstantCommand(() -> {
+            elevatorSubsystem.setIntake(0);
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                Robot.m_ledSubsystem.m_leds.setSpeed(0.61);
+            } else {
+                Robot.m_ledSubsystem.m_leds.setSpeed(0.87);
+            }
+        }));
+
         operatorXbox.leftTrigger().and(new BooleanSupplier() {
             @Override
             public boolean getAsBoolean() {
@@ -220,11 +233,11 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
-        operatorXbox.button(7).onTrue(new InstantCommand(() -> {
-            elevatorSubsystem.setElevatorState(ElevatorState.Intake);
-        })).onFalse(new InstantCommand(() -> {
-            elevatorSubsystem.resetElevatorState();
-        }));
+        // operatorXbox.button(7).onTrue(new InstantCommand(() -> {
+        //     elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+        // })).onFalse(new InstantCommand(() -> {
+        //     elevatorSubsystem.resetElevatorState();
+        // }));
 
         operatorXbox.button(8).onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.Reset);
