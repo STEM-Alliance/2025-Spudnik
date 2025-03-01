@@ -12,6 +12,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -267,10 +268,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setChassisSpeedsAUTO(ChassisSpeeds speeds) {
         double tmp = speeds.vxMetersPerSecond;
-        speeds.vxMetersPerSecond = -speeds.vyMetersPerSecond;
-        speeds.vyMetersPerSecond = -tmp;
-        tmp = speeds.omegaRadiansPerSecond;
-        // speeds.omegaRadiansPerSecond *= -1;
+        // speeds.vxMetersPerSecond = -speeds.vyMetersPerSecond;
+        // speeds.vyMetersPerSecond = -tmp;
+        // tmp = speeds.omegaRadiansPerSecond;
+        speeds.vxMetersPerSecond = MathUtil.clamp(-speeds.vyMetersPerSecond, -2, 2);
+        speeds.vyMetersPerSecond = MathUtil.clamp(-tmp, -2, 2);
+        tmp = MathUtil.clamp(speeds.omegaRadiansPerSecond, -Math.PI/2, Math.PI/2);
+        
+        speeds.omegaRadiansPerSecond = tmp;
         SwerveModuleState[] states = DriveConstants.KINEMATICS.toSwerveModuleStates(speeds);
         setModules(states);
     }

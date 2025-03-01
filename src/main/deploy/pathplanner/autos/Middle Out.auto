@@ -7,13 +7,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "middle out"
+            "pathName": "middle turn"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "middle out"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L1"
+                }
+              }
+            ]
           }
         },
         {
