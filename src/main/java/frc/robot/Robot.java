@@ -102,11 +102,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_ledSubsystem.m_leds.setSpeed(-0.15);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    m_robotContainer.getSwerveSubsystem().setHeading(180);
   }
 
   /** This function is called periodically during autonomous. */

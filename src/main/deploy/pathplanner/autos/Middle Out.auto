@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L1"
+                  "name": "L4"
                 }
               }
             ]
@@ -27,6 +27,18 @@
           "type": "named",
           "data": {
             "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Park"
           }
         }
       ]

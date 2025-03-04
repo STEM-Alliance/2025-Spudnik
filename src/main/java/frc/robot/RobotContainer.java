@@ -100,7 +100,7 @@ public class RobotContainer {
             elevatorSubsystem.setIntake(0);
         })));
 
-        NamedCommands.registerCommand("L0",
+        NamedCommands.registerCommand("Park",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
         NamedCommands.registerCommand("L1",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L1)));

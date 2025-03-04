@@ -215,7 +215,7 @@ public final class Constants {
 
   public static final class PathPlannerConstants {
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0, 0);
-    public static final PIDConstants ROTATION_PID = new PIDConstants(5, 0, 0.2);
+    public static final PIDConstants ROTATION_PID = new PIDConstants(0.001, 0, 0);
 
     public static final PPHolonomicDriveController HOLONOMIC_FOLLOWER_CONTROLLER = new PPHolonomicDriveController(
       TRANSLATION_PID,
@@ -226,6 +226,7 @@ public final class Constants {
       RobotConstants.TOTAL_MASS_KG,
       RobotConstants.MOMENT_OF_INERTIA,
       new ModuleConfig(
+        
         SwerveModuleConstants.WHEEL_DIAMETER / 2,
         DriveConstants.MAX_MODULE_VELOCITY,
         SwerveModuleConstants.WHEEL_FRICTION_COEFFICIENT, // TODO: ############## REPLACE PLACEHOLDERS ##############
