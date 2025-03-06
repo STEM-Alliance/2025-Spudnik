@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem.AlgaePosition;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
@@ -71,7 +73,8 @@ public class RobotContainer {
     private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem();
     // private final LEDSubsystem m_LedSubsystem = new LEDSubsystem();
     private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
-    private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
+    private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,
+            Robot.m_ledSubsystem);
     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static boolean intakeInterup = false;
@@ -93,12 +96,12 @@ public class RobotContainer {
         // Configure the trigger bindings
 
         // TODO: Change Speed To Correct Value
-        NamedCommands.registerCommand("PlaceCoral", 
-        new InstantCommand(() -> elevatorSubsystem.setIntake(1))
-        .andThen(new WaitCommand(1))
-        .andThen(new InstantCommand(() -> {
-            elevatorSubsystem.setIntake(0);
-        })));
+        NamedCommands.registerCommand("PlaceCoral",
+                new InstantCommand(() -> elevatorSubsystem.setIntake(1))
+                        .andThen(new WaitCommand(1))
+                        .andThen(new InstantCommand(() -> {
+                            elevatorSubsystem.setIntake(0);
+                        })));
 
         NamedCommands.registerCommand("L0",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.Park)));
@@ -111,13 +114,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("L4",
                 new InstantCommand(() -> elevatorSubsystem.setElevatorState(ElevatorState.L4)));
         NamedCommands.registerCommand("Intake",
-            new InstantCommand(() -> {
-                elevatorSubsystem.setElevatorState(ElevatorState.Intake);
-                new CoralAlignForwardsCommand(elevatorSubsystem);
-                new CoralAlignPassthroughCommand(elevatorSubsystem);
-            }));
-        // NamedCommands.registerCommand("LED Blue", 
-        //         new InstantCommand(() -> m_LedSubsystem.blue())
+                new InstantCommand(() -> {
+                    elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+                    new CoralAlignForwardsCommand(elevatorSubsystem);
+                    new CoralAlignPassthroughCommand(elevatorSubsystem);
+                }));
+        // NamedCommands.registerCommand("LED Blue",
+        // new InstantCommand(() -> m_LedSubsystem.blue())
         // );
         configureBindings();
 
@@ -156,9 +159,8 @@ public class RobotContainer {
             intakeInterup = false;
             elevatorSubsystem.setElevatorState(ElevatorState.Intake);
         })).onTrue(new SequentialCommandGroup(
-            new CoralAlignForwardsCommand(elevatorSubsystem),
-            new CoralAlignPassthroughCommand(elevatorSubsystem)
-        ));
+                new CoralAlignForwardsCommand(elevatorSubsystem),
+                new CoralAlignPassthroughCommand(elevatorSubsystem)));
 
         operatorXbox.rightBumper().onTrue(new InstantCommand(() -> {
             intakeInterup = true;
@@ -185,14 +187,14 @@ public class RobotContainer {
             }
         }));
 
-        operatorXbox.leftTrigger().and(new BooleanSupplier() {
-            @Override
-            public boolean getAsBoolean() {
-                return operatorXbox.getLeftTriggerAxis() > 0.2;
-            }
-        }).onTrue(new InstantCommand(() -> {
-            algaeSubsystem.placeAlgae();
-        }));
+        // operatorXbox.leftTrigger().and(new BooleanSupplier() {
+        // @Override
+        // public boolean getAsBoolean() {
+        // return operatorXbox.getLeftTriggerAxis() > 0.2;
+        // }
+        // }).onTrue(new InstantCommand(() -> {
+        // algaeSubsystem.placeAlgae();
+        // }));
 
         // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem,
         // ElevatorConstants.LV1));
@@ -208,16 +210,26 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
-        operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(-0.5);
-        }) ).onFalse(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0);
+
+        operatorXbox.povUp().onTrue(new SequentialCommandGroup(algaeSubsystem.algaeMoveCommand(AlgaePosition.L3),
+                new InstantCommand(() -> algaeSubsystem.intakeAlgae())));
+
+        operatorXbox.povLeft().onTrue(new SequentialCommandGroup(algaeSubsystem.algaeMoveCommand(AlgaePosition.L2),
+                new InstantCommand(() -> algaeSubsystem.intakeAlgae())));
+
+        operatorXbox.povDown().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.STOWED));
+
+        operatorXbox.povRight().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.PROCESSOR));
+
+        operatorXbox.leftTrigger().and(new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+                return operatorXbox.getLeftTriggerAxis() > 0.1;
+            }
+        }).onTrue(new InstantCommand(() -> {
+            algaeSubsystem.extakeAlgae();
         }));
-        operatorXbox.rightTrigger().onTrue(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0.5);
-        }) ).onFalse(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0);
-        }));
+
         operatorXbox.b().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.L2);
         })).onFalse(new InstantCommand(() -> {
@@ -234,9 +246,9 @@ public class RobotContainer {
             elevatorSubsystem.resetElevatorState();
         }));
         // operatorXbox.button(7).onTrue(new InstantCommand(() -> {
-        //     elevatorSubsystem.setElevatorState(ElevatorState.Intake);
+        // elevatorSubsystem.setElevatorState(ElevatorState.Intake);
         // })).onFalse(new InstantCommand(() -> {
-        //     elevatorSubsystem.resetElevatorState();
+        // elevatorSubsystem.resetElevatorState();
         // }));
 
         operatorXbox.button(8).onTrue(new InstantCommand(() -> {
