@@ -197,12 +197,13 @@ public final class Constants {
     public static final double kG = 0;
     public static final double kV = 0;
   }
+
   public static class CommonConstants {
     public static final boolean LOG_INTO_FILE_ENABLED = true;
   }
 
   public static class AlgaeConstants{
-    public static final int ALGAE_INTAKE_PORT = 16;
+    public static final int ALGAE_INTAKE_PORT = 13;
     public static final int ALGAE_MANIP_PORT = 19;
     public static final double kS = 0;
     public static final double kG = 0;
@@ -211,6 +212,11 @@ public final class Constants {
     public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
     public static final double ALGAE_PLACE_SPEED = -0.2;
     public static final int ALGAE_LIMIT_SWITCH = 3;
+
+    public static final double motorOffset = Units.rotationsToRadians(0);
+    public static final PIDController PID_CONTROLLER = new PIDController(25, 0.001, 0);
+    public static final int encoderPort = 5;
+    public static final boolean Reversed = false;
   }
 
   public static final class PathPlannerConstants {

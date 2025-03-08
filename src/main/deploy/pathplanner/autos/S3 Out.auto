@@ -5,19 +5,25 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Place A"
+                  "pathName": "Stat3Out"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2"
+                  "name": "L4"
                 }
               }
             ]
@@ -27,6 +33,18 @@
           "type": "named",
           "data": {
             "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Park"
           }
         }
       ]

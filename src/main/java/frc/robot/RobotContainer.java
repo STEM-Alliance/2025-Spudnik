@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -35,13 +36,15 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.PassThroughCommand;
 import frc.robot.commands.ReverseCoralCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.AlgaeSubsystemV2;
+//import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
 import frc.robot.subsystems.ElasticSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.AlgaeSubsystemV2.AlgaeGoal;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
@@ -72,8 +75,9 @@ public class RobotContainer {
     // private final LEDSubsystem m_LedSubsystem = new LEDSubsystem();
     private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
-    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-    private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    // private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    private final AlgaeSubsystemV2 algaeSubsystem = new AlgaeSubsystemV2(operatorXbox);
+    //private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static boolean intakeInterup = false;
     // need can id of sensor to declare next line
     // private final TofDistanceSubsystem tofDistanceSubsystem = new
@@ -191,7 +195,7 @@ public class RobotContainer {
                 return operatorXbox.getLeftTriggerAxis() > 0.2;
             }
         }).onTrue(new InstantCommand(() -> {
-            algaeSubsystem.placeAlgae();
+            algaeSubsystem.extakeAlgae();
         }));
 
         // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem,
@@ -208,16 +212,6 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
-        operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(-0.5);
-        }) ).onFalse(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0);
-        }));
-        operatorXbox.rightTrigger().onTrue(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0.5);
-        }) ).onFalse(new InstantCommand(() -> {
-            algaeSubsystem.algaeIntake.set(0);
-        }));
         operatorXbox.b().onTrue(new InstantCommand(() -> {
             elevatorSubsystem.setElevatorState(ElevatorState.L2);
         })).onFalse(new InstantCommand(() -> {
@@ -233,6 +227,31 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
+
+        operatorXbox.povUp().onTrue(new ParallelCommandGroup(
+            algaeSubsystem.moveAlgae(AlgaeGoal.L3),
+            new InstantCommand(() -> {
+                algaeSubsystem.intakeAlgae();
+            })
+        ));
+
+        operatorXbox.povLeft().onTrue(new ParallelCommandGroup(
+            algaeSubsystem.moveAlgae(AlgaeGoal.L2),
+            new InstantCommand(() -> {
+                algaeSubsystem.intakeAlgae();
+            })
+        ));
+
+        operatorXbox.povRight().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Processor));
+
+        operatorXbox.povDown().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
+
+        operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
+            algaeSubsystem.extakeAlgae();
+        })).onFalse(new InstantCommand(() -> {
+            algaeSubsystem.stop();
+        }));
+
         // operatorXbox.button(7).onTrue(new InstantCommand(() -> {
         //     elevatorSubsystem.setElevatorState(ElevatorState.Intake);
         // })).onFalse(new InstantCommand(() -> {
