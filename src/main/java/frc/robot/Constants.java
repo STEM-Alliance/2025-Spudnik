@@ -79,7 +79,7 @@ public final class Constants {
     // public static final double MODULE_KD = 0.03;
 
     // NOTE: This may need additional tuning!
-    public static final double MODULE_KP = 0.3;// 0.75628;// 0.7491; //.5;
+    public static final double MODULE_KP = 0.285;// 0.75628;// 0.7491; //.5;
     public static final double MODULE_KD = 0.0001;// 0.0057682; //0.0076954;
 
     // --------- Front Left Module --------- \\

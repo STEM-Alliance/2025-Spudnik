@@ -85,7 +85,7 @@ public class RobotContainer {
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
-    private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
+    // private final UsbCamera intakeCam = CameraServer.startAutomaticCapture();
     private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID(),
             m_photonCamera);
 

@@ -275,6 +275,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   
   public void setIntake(double speed) {
     coralLeader.set(speed);
+    coralFollower.set(speed);
   }
 
   public double getIntakeEncoderPosition() {
