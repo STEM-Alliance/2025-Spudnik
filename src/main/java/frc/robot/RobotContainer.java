@@ -120,6 +120,34 @@ public class RobotContainer {
                 new CoralAlignForwardsCommand(elevatorSubsystem);
                 new CoralAlignPassthroughCommand(elevatorSubsystem);
             }));
+
+        NamedCommands.registerCommand("AL2", new ParallelCommandGroup(
+            algaeSubsystem.moveAlgae(AlgaeGoal.L2),
+            new InstantCommand(() -> {
+                algaeSubsystem.intakeAlgae();
+            })
+        ));
+
+        NamedCommands.registerCommand("AL3", new ParallelCommandGroup(
+            algaeSubsystem.moveAlgae(AlgaeGoal.L3),
+            new InstantCommand(() -> {
+                algaeSubsystem.intakeAlgae();
+            })
+        ));
+
+        NamedCommands.registerCommand("Algae Stowed", algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
+        NamedCommands.registerCommand("Algae Shoot", new InstantCommand(() -> {
+            algaeSubsystem.extakeAlgae();
+        })
+        .andThen(new WaitCommand(1))
+        .andThen(new InstantCommand(() -> {
+            algaeSubsystem.stop();
+        })));
+
+        NamedCommands.registerCommand("AStop", new InstantCommand(() -> {
+            algaeSubsystem.stop();
+        }));
+
         // NamedCommands.registerCommand("LED Blue", 
         //         new InstantCommand(() -> m_LedSubsystem.blue())
         // );
@@ -242,6 +270,8 @@ public class RobotContainer {
             })
         ));
 
+        
+
         operatorXbox.povRight().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Processor));
 
         operatorXbox.povDown().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
@@ -325,5 +355,9 @@ public class RobotContainer {
 
     public ElevatorSubsystem getElevatorSubsystem() {
         return elevatorSubsystem;
+    }
+
+    public AlgaeSubsystemV2 getAlgaeSubsystem() {
+        return algaeSubsystem;
     }
 }

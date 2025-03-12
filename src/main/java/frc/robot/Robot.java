@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.AlgaeSubsystemV2.AlgaeGoal;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 
@@ -126,13 +127,13 @@ public class Robot extends TimedRobot {
    // otContainer.getElevatorSubsystem().setElevatorState(ElevatorState.Reset);
    //m_ledSubsystem.blue();
     // m_ledSubsystem.m_leds.setSpeed(0);
+    m_robotContainer.getAlgaeSubsystem().setAlgaeGoal(AlgaeGoal.Stowed);
     m_robotContainer.getSwerveSubsystem().setRotationStyle(RotationStyle.Driver);
     // m_robotContainer.resetShootake();
     if (DriverStation.getAlliance().get() == Alliance.Red) {
       m_ledSubsystem.m_leds.setSpeed(0.61);
     } else {
       m_ledSubsystem.m_leds.setSpeed(0.87);
-
     }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

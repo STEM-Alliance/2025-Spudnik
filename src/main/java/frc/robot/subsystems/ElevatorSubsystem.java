@@ -184,7 +184,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         case Manual:
           break;
         case Reset:
-          elevatorMove(-0.1);
+          elevatorMove(-0.25);
           if(elevatorLimitSwitch.get()) {
             zeroElevator();
             setElevatorState(ElevatorState.Intake);

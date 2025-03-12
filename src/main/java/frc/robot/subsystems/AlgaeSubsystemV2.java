@@ -40,12 +40,15 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
   private final CommandXboxController opController;
   private final ArmFeedforward armFeedforward = new ArmFeedforward(0, 0.85, 0.32,0.10);//kV was 0.26
   private double armOffset = 0;
+  private int holdCounter = 0;
+  private boolean intaking = false;
 
   public enum AlgaeGoal {
     Stowed(-0.01),
     Processor(-0.05),
-    L2(-0.19),
-    L3(-0.21);
+    L2(-0.307),
+    L3(-0.453);
+
     public final double goal;
 
     private AlgaeGoal(double goal) {
@@ -91,7 +94,7 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
 
     double pidOutput = AlgaeConstants.PID_CONTROLLER.calculate(getAbsoluteEncoderPosition(), (algaeGoal.goal + armOffset));
     double feedForwardOutput = 0;// - armFeedforward.calculate((algaeGoal.goal + 0.25), 0);
-    algaePivot.set((pidOutput  +feedForwardOutput) / 12d); //motor inverted instead of megative
+    algaePivot.set((pidOutput + feedForwardOutput) / 12d); //motor inverted instead of megative
 
     SmartDashboard.putString("Current Alage Position", algaeGoal.name());
     SmartDashboard.putNumber("Algae Encoder Position", getAbsoluteEncoderPosition());
@@ -101,9 +104,16 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
     SmartDashboard.putNumber("Arm PID Output",pidOutput);
     SmartDashboard.putNumber("Arm Feedforward Output",feedForwardOutput);
 
-    if(hasAlgae() && opController.getLeftTriggerAxis() < 0.2) {
-      stop();
+    if (hasAlgae()) {
+      intaking = false;
     }
+
+    if(intaking) {
+      algaeIntake.setVoltage(2);
+    } else if (opController.getLeftTriggerAxis() < 0.1) {
+      algaeIntake.set(0);
+    }
+
   }
 
   public boolean hasAlgae() {
@@ -111,15 +121,18 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
   }
 
   public void intakeAlgae(){
+    intaking = true;
     algaeIntake.setVoltage(3);
   }
 
   public void stop(){
     algaeIntake.set(0);
+    intaking = false;
   }
 
   public void extakeAlgae(){
     algaeIntake.set(-1);
+    intaking = false;
   }
 
    public double getAbsoluteEncoderPosition() {
@@ -130,7 +143,7 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
       
       return new SequentialCommandGroup(new InstantCommand(() -> {
         armOffset = 0;
-        this.algaeGoal = algaeGoal;
+        setAlgaeGoal(algaeGoal);
       }), new InstantCommand(() -> {
         intakeAlgae();
       }).onlyIf(new BooleanSupplier() {
