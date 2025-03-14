@@ -41,6 +41,7 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
   private final ArmFeedforward armFeedforward = new ArmFeedforward(0, 0.85, 0.32,0.10);//kV was 0.26
   private double armOffset = 0;
   private int holdCounter = 0;
+  private boolean manualAlgaeIntake = false;
   private boolean intaking = false;
 
   public enum AlgaeGoal {
@@ -108,7 +109,9 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
       intaking = false;
     }
 
-    if(intaking) {
+    if (manualAlgaeIntake) {
+
+    } else if(intaking) {
       algaeIntake.setVoltage(2);
     } else if (opController.getLeftTriggerAxis() < 0.1) {
       algaeIntake.set(0);
@@ -125,13 +128,20 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
     algaeIntake.setVoltage(3);
   }
 
+  public void intakeAlgaeManual(){
+    manualAlgaeIntake = true;
+    algaeIntake.setVoltage(3);
+  }
+
   public void stop(){
     algaeIntake.set(0);
+    manualAlgaeIntake = false;
     intaking = false;
   }
 
   public void extakeAlgae(){
     algaeIntake.set(-1);
+    manualAlgaeIntake = false;
     intaking = false;
   }
 
@@ -144,14 +154,17 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
       return new SequentialCommandGroup(new InstantCommand(() -> {
         armOffset = 0;
         setAlgaeGoal(algaeGoal);
-      }), new InstantCommand(() -> {
-        intakeAlgae();
-      }).onlyIf(new BooleanSupplier() {
-        @Override
-        public boolean getAsBoolean() {
-            return hasAlgae();
-        }
-      }));
+      }
+      )
+    );
+      // }), new InstantCommand(() -> {
+      //   intakeAlgae();
+      // }).onlyIf(new BooleanSupplier() {
+      //   @Override
+      //   public boolean getAsBoolean() {
+      //       return hasAlgae();
+      //   }
+      // }));
       // }), new ConditionalCommand(new InstantCommand(() -> {
       //   intakeAlgae();
       // }), new PrintCommand("Already Has Algae!"), new BooleanSupplier() {

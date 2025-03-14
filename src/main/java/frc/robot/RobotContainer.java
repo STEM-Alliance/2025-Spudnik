@@ -226,6 +226,18 @@ public class RobotContainer {
             algaeSubsystem.extakeAlgae();
         }));
 
+        // operatorXbox.rightTrigger().onTrue(new InstantCommand(() -> {
+        //     if (!algaeSubsystem.hasAlgae()) {
+        //         algaeSubsystem.intakeAlgae();
+        //     }
+        // }));
+
+        operatorXbox.rightTrigger().whileTrue(new InstantCommand(() -> {
+            algaeSubsystem.intakeAlgaeManual();
+        })).onFalse(new InstantCommand(() -> {
+            algaeSubsystem.stop();
+        }));
+
         // operatorXbox.a().whileTrue(new PositionElevator(elevatorSubsystem,
         // ElevatorConstants.LV1));
         // operatorXbox.b().whileTrue(new PositionElevator(elevatorSubsystem,
