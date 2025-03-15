@@ -218,7 +218,7 @@ public final class Constants {
 
     //used in V2, now useless
     public static final double motorOffset = Units.rotationsToRadians(0);
-    public static final PIDController PID_CONTROLLER = new PIDController(0.000001, 0.0, 0);
+    public static final PIDController PID_CONTROLLER = new PIDController(0.1, 0.0, 0);
     public static final int encoderPort = 5;
     public static final boolean Reversed = false;
 

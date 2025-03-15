@@ -270,25 +270,25 @@ public class RobotContainer {
             elevatorSubsystem.resetElevatorState();
         }));
         //temp out until tuned
-        operatorXbox.povUp().onTrue(new ParallelCommandGroup(
-            algaeSubsystem.algaeMoveCommand(AlgaePosition.L3),
-            new InstantCommand(() -> {
-                algaeSubsystem.intakeAlgae();
-            })
-        ));
+        // operatorXbox.povUp().onTrue(new ParallelCommandGroup(
+        //     algaeSubsystem.algaeMoveCommand(AlgaePosition.L3),
+        //     new InstantCommand(() -> {
+        //         algaeSubsystem.intakeAlgae();
+        //     })
+        // ));
 
-        operatorXbox.povLeft().onTrue(new ParallelCommandGroup(
-            algaeSubsystem.algaeMoveCommand(AlgaePosition.L2),
-            new InstantCommand(() -> {
-                algaeSubsystem.intakeAlgae();
-            })
-        ));//end temp
+        // operatorXbox.povLeft().onTrue(new ParallelCommandGroup(
+        //     algaeSubsystem.algaeMoveCommand(AlgaePosition.L2),
+        //     new InstantCommand(() -> {
+        //         algaeSubsystem.intakeAlgae();
+        //     })
+        // ));//end temp
 
         
 
-        operatorXbox.povRight().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.PROCESSOR));
+        // operatorXbox.povRight().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.PROCESSOR));
 
-        operatorXbox.povDown().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.STOWED));
+        // operatorXbox.povDown().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.STOWED));
 
         operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
             algaeSubsystem.extakeAlgae();
