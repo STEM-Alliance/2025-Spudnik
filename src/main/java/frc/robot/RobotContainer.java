@@ -37,6 +37,7 @@ import frc.robot.commands.PassThroughCommand;
 import frc.robot.commands.ReverseCoralCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.AlgaeSubsystemV2;
+import frc.robot.subsystems.AlgaeSubsystemV3;
 //import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
 import frc.robot.subsystems.ElasticSubsystem;
@@ -45,6 +46,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.AlgaeSubsystemV2.AlgaeGoal;
+import frc.robot.subsystems.AlgaeSubsystemV3.AlgaePosition;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
@@ -76,7 +78,7 @@ public class RobotContainer {
     private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
     // private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-    private final AlgaeSubsystemV2 algaeSubsystem = new AlgaeSubsystemV2(operatorXbox);
+    private final AlgaeSubsystemV3 algaeSubsystem = new AlgaeSubsystemV3();
     //private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static boolean intakeInterup = false;
     // need can id of sensor to declare next line
@@ -122,20 +124,20 @@ public class RobotContainer {
             }));
 
         NamedCommands.registerCommand("AL2", new ParallelCommandGroup(
-            algaeSubsystem.moveAlgae(AlgaeGoal.L2),
+            algaeSubsystem.algaeMoveCommand(AlgaePosition.L2),
             new InstantCommand(() -> {
                 algaeSubsystem.intakeAlgae();
             })
         ));
 
         NamedCommands.registerCommand("AL3", new ParallelCommandGroup(
-            algaeSubsystem.moveAlgae(AlgaeGoal.L3),
+            algaeSubsystem.algaeMoveCommand(AlgaePosition.L3),
             new InstantCommand(() -> {
                 algaeSubsystem.intakeAlgae();
             })
         ));
 
-        NamedCommands.registerCommand("Algae Stowed", algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
+        NamedCommands.registerCommand("Algae Stowed", algaeSubsystem.algaeMoveCommand(AlgaePosition.STOWED));
         NamedCommands.registerCommand("Algae Shoot", new InstantCommand(() -> {
             algaeSubsystem.extakeAlgae();
         })
@@ -267,26 +269,26 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
-
+        //temp out until tuned
         operatorXbox.povUp().onTrue(new ParallelCommandGroup(
-            algaeSubsystem.moveAlgae(AlgaeGoal.L3),
+            algaeSubsystem.algaeMoveCommand(AlgaePosition.L3),
             new InstantCommand(() -> {
                 algaeSubsystem.intakeAlgae();
             })
         ));
 
         operatorXbox.povLeft().onTrue(new ParallelCommandGroup(
-            algaeSubsystem.moveAlgae(AlgaeGoal.L2),
+            algaeSubsystem.algaeMoveCommand(AlgaePosition.L2),
             new InstantCommand(() -> {
                 algaeSubsystem.intakeAlgae();
             })
-        ));
+        ));//end temp
 
         
 
-        operatorXbox.povRight().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Processor));
+        operatorXbox.povRight().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.PROCESSOR));
 
-        operatorXbox.povDown().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
+        operatorXbox.povDown().onTrue(algaeSubsystem.algaeMoveCommand(AlgaePosition.STOWED));
 
         operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
             algaeSubsystem.extakeAlgae();
@@ -369,7 +371,7 @@ public class RobotContainer {
         return elevatorSubsystem;
     }
 
-    public AlgaeSubsystemV2 getAlgaeSubsystem() {
+    public AlgaeSubsystemV3 getAlgaeSubsystem() {
         return algaeSubsystem;
     }
 }

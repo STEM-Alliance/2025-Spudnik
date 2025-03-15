@@ -9,11 +9,14 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -213,10 +216,17 @@ public final class Constants {
     public static final double ALGAE_PLACE_SPEED = -0.2;
     public static final int ALGAE_LIMIT_SWITCH = 3;
 
+    //used in V2, now useless
     public static final double motorOffset = Units.rotationsToRadians(0);
-    public static final PIDController PID_CONTROLLER = new PIDController(25, 0.001, 0);
+    public static final PIDController PID_CONTROLLER = new PIDController(0.000001, 0.0, 0);
     public static final int encoderPort = 5;
     public static final boolean Reversed = false;
+
+    //used in V3
+    public static final ArmFeedforward ALGAE_FEEDFORWARD = new ArmFeedforward(0, 0.38, 2.44, 0.04);
+
+    public static final ProfiledPIDController ALGAE_ARM_CONTROLLER = new ProfiledPIDController(0.0001, 0, 0,
+        new Constraints(2, 2));
   }
 
   public static final class PathPlannerConstants {

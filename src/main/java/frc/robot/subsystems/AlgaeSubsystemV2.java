@@ -38,7 +38,7 @@ public class AlgaeSubsystemV2 extends SubsystemBase {
   public final SparkMax algaePivot;
   public final SparkMax algaeIntake;
   private final CommandXboxController opController;
-  private final ArmFeedforward armFeedforward = new ArmFeedforward(0, 0.85, 0.32,0.10);//kV was 0.26
+  private final ArmFeedforward armFeedforward = new ArmFeedforward(0, 0.38, 2.44,0.04);//kV was 0.26
   private double armOffset = 0;
   private int holdCounter = 0;
   private boolean manualAlgaeIntake = false;
