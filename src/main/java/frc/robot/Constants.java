@@ -212,6 +212,9 @@ public final class Constants {
     public static final double ALGAE_INTAKE_SPEED = 0.5; //50 percent
     public static final double ALGAE_PLACE_SPEED = -0.2;
     public static final int ALGAE_LIMIT_SWITCH = 3;
+    public static final double TOP_LIMIT = -50; //check
+    public static final double BOTTOM_LIMIT = 0; //check
+    public static final double deadband = 0.01;
 
     public static final double motorOffset = Units.rotationsToRadians(0);
     public static final PIDController PID_CONTROLLER = new PIDController(25, 0.001, 0);

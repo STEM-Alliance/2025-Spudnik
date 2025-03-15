@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
    // otContainer.getElevatorSubsystem().setElevatorState(ElevatorState.Reset);
    //m_ledSubsystem.blue();
     // m_ledSubsystem.m_leds.setSpeed(0);
-    m_robotContainer.getAlgaeSubsystem().setAlgaeGoal(AlgaeGoal.Stowed);
+    //m_robotContainer.getAlgaeSubsystem().setAlgaeGoal(AlgaeGoal.Stowed); removed
     m_robotContainer.getSwerveSubsystem().setRotationStyle(RotationStyle.Driver);
     // m_robotContainer.resetShootake();
     if (DriverStation.getAlliance().get() == Alliance.Red) {

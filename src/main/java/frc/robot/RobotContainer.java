@@ -36,7 +36,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.PassThroughCommand;
 import frc.robot.commands.ReverseCoralCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.AlgaeSubsystemV2;
+//import frc.robot.subsystems.AlgaeSubsystemV2;
 //import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DistanceSensorSubsystem;
 import frc.robot.subsystems.ElasticSubsystem;
@@ -44,7 +44,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.AlgaeSubsystemV2.AlgaeGoal;
+//import frc.robot.subsystems.AlgaeSubsystemV2.AlgaeGoal;
 import frc.robot.subsystems.SwerveSubsystem.RotationStyle;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
@@ -76,7 +76,7 @@ public class RobotContainer {
     private static final DistanceSensorSubsystem distanceSensorSubsystem = new DistanceSensorSubsystem(0);
     private static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(distanceSensorSubsystem,Robot.m_ledSubsystem);
     // private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
-    private final AlgaeSubsystemV2 algaeSubsystem = new AlgaeSubsystemV2(operatorXbox);
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem(operatorXbox);
     //private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static boolean intakeInterup = false;
     // need can id of sensor to declare next line
@@ -120,7 +120,7 @@ public class RobotContainer {
                 new CoralAlignForwardsCommand(elevatorSubsystem);
                 new CoralAlignPassthroughCommand(elevatorSubsystem);
             }));
-
+/* no algae in auto
         NamedCommands.registerCommand("AL2", new ParallelCommandGroup(
             algaeSubsystem.moveAlgae(AlgaeGoal.L2),
             new InstantCommand(() -> {
@@ -143,7 +143,7 @@ public class RobotContainer {
         .andThen(new InstantCommand(() -> {
             algaeSubsystem.stop();
         })));
-
+*/
         NamedCommands.registerCommand("AStop", new InstantCommand(() -> {
             algaeSubsystem.stop();
         }));
@@ -267,7 +267,7 @@ public class RobotContainer {
         })).onFalse(new InstantCommand(() -> {
             elevatorSubsystem.resetElevatorState();
         }));
-
+/* algae button removed
         operatorXbox.povUp().onTrue(new ParallelCommandGroup(
             algaeSubsystem.moveAlgae(AlgaeGoal.L3),
             new InstantCommand(() -> {
@@ -287,7 +287,7 @@ public class RobotContainer {
         operatorXbox.povRight().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Processor));
 
         operatorXbox.povDown().onTrue(algaeSubsystem.moveAlgae(AlgaeGoal.Stowed));
-
+*/
         operatorXbox.leftTrigger().onTrue(new InstantCommand(() -> {
             algaeSubsystem.extakeAlgae();
         })).onFalse(new InstantCommand(() -> {
@@ -369,7 +369,7 @@ public class RobotContainer {
         return elevatorSubsystem;
     }
 
-    public AlgaeSubsystemV2 getAlgaeSubsystem() {
+    public AlgaeSubsystem getAlgaeSubsystem() {
         return algaeSubsystem;
     }
 }
